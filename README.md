@@ -90,6 +90,9 @@ Sur Render, avec `render.yaml` : voir la partie 4 du [guide de mise en place](do
 
 `npm run cdn:integrite` calcule l'empreinte SRI de chaque fichier et l'écrit dans les pages : le navigateur refusera un fichier modifié sur le CDN. À lancer une fois (connexion Internet nécessaire), puis après chaque changement de version.
 
+## Auteur
+Giovani MOUKOKO Akieniacademy
+
 ## Illustrations
 
 Les 24 produits et les 4 diapositives du carrousel ont des illustrations vectorielles (`public/images/**/*.svg`), légères et nettes sur tous les écrans. Pour les remplacer par des photos, voir [docs/photos-produits.md](docs/photos-produits.md).
