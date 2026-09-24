@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Poulet">
+  <title>Poulet</title>
+  <rect width="240" height="240" rx="36" fill="#f7e1d9"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <ellipse cx="116" cy="136" rx="64" ry="48" fill="#f6efe3"/>
+  <path d="M160 120 q34 -30 20 -64 q-4 30 -30 44z" fill="#e9dfcc"/>
+  <circle cx="84" cy="90" r="26" fill="#f6efe3"/>
+  <path d="M72 64 q4 -14 12 -2 q6 -14 12 0 q8 -8 8 6z" fill="#d42f22"/>
+  <path d="M60 92 l-16 6 16 6z" fill="#f2b233"/>
+  <path d="M70 104 q2 14 10 14 q2 -10 -2 -14z" fill="#d42f22"/>
+  <circle cx="78" cy="86" r="4" fill="#1b2238"/>
+  <path d="M96 140 q30 20 60 -6" stroke="#d8ccb5" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M104 182 v14 M128 182 v14" stroke="#f2b233" stroke-width="6" stroke-linecap="round"/>
+</svg>

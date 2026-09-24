@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Piment">
+  <title>Piment</title>
+  <rect width="240" height="240" rx="36" fill="#e2f0dc"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+
+  <path d="M70 110 q22 -4 40 22 q10 18 2 26 q-26 -8 -44 -38z" fill="#d42f22" transform="rotate(10 70 110)"/>
+  <path d="M70 110 q-6 -10 -2 -18" stroke="#3f8a32" stroke-width="5" stroke-linecap="round" fill="none" transform="rotate(10 70 110)"/>
+  <path d="M110 96 q22 -4 40 22 q10 18 2 26 q-26 -8 -44 -38z" fill="#e8452a" transform="rotate(30 110 96)"/>
+  <path d="M110 96 q-6 -10 -2 -18" stroke="#3f8a32" stroke-width="5" stroke-linecap="round" fill="none" transform="rotate(30 110 96)"/>
+  <path d="M128 130 q22 -4 40 22 q10 18 2 26 q-26 -8 -44 -38z" fill="#c7261c" transform="rotate(-10 128 130)"/>
+  <path d="M128 130 q-6 -10 -2 -18" stroke="#3f8a32" stroke-width="5" stroke-linecap="round" fill="none" transform="rotate(-10 128 130)"/>
+  <path d="M84 146 q22 -4 40 22 q10 18 2 26 q-26 -8 -44 -38z" fill="#e8452a" transform="rotate(-30 84 146)"/>
+  <path d="M84 146 q-6 -10 -2 -18" stroke="#3f8a32" stroke-width="5" stroke-linecap="round" fill="none" transform="rotate(-30 84 146)"/>
+  <path d="M150 104 q22 -4 40 22 q10 18 2 26 q-26 -8 -44 -38z" fill="#d42f22" transform="rotate(50 150 104)"/>
+  <path d="M150 104 q-6 -10 -2 -18" stroke="#3f8a32" stroke-width="5" stroke-linecap="round" fill="none" transform="rotate(50 150 104)"/>
+</svg>

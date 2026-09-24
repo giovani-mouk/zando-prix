@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Gombo">
+  <title>Gombo</title>
+  <rect width="240" height="240" rx="36" fill="#e2f0dc"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+
+  <path d="M82 58 q14 0 16 20 l-6 86 q-2 8 -10 12 q-8 -4 -10 -12 l-6 -86 q2 -20 16 -20z" fill="#6fae4a" transform="rotate(-22 82 118)"/>
+  <path d="M82 64 v98" stroke="#3f7a2a" stroke-width="2" transform="rotate(-22 82 118)"/>
+  <rect x="76" y="46" width="12" height="14" rx="4" fill="#3f7a2a" transform="rotate(-22 82 118)"/>
+  <path d="M120 50 q14 0 16 20 l-6 86 q-2 8 -10 12 q-8 -4 -10 -12 l-6 -86 q2 -20 16 -20z" fill="#7cbb52" transform="rotate(0 120 110)"/>
+  <path d="M120 56 v98" stroke="#3f7a2a" stroke-width="2" transform="rotate(0 120 110)"/>
+  <rect x="114" y="38" width="12" height="14" rx="4" fill="#3f7a2a" transform="rotate(0 120 110)"/>
+  <path d="M158 58 q14 0 16 20 l-6 86 q-2 8 -10 12 q-8 -4 -10 -12 l-6 -86 q2 -20 16 -20z" fill="#6fae4a" transform="rotate(22 158 118)"/>
+  <path d="M158 64 v98" stroke="#3f7a2a" stroke-width="2" transform="rotate(22 158 118)"/>
+  <rect x="152" y="46" width="12" height="14" rx="4" fill="#3f7a2a" transform="rotate(22 158 118)"/>
+</svg>

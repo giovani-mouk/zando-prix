@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Sucre">
+  <title>Sucre</title>
+  <rect width="240" height="240" rx="36" fill="#e8e6f3"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <path d="M40 150 l40 -20 40 20 -40 20z" fill="#ffffff" stroke="#c9c6d9" stroke-width="3"/>
+  <path d="M40 150 v34 l40 20 v-34z" fill="#eeedf5" stroke="#c9c6d9" stroke-width="3"/>
+  <path d="M120 150 v34 l-40 20 v-34z" fill="#f7f6fb" stroke="#c9c6d9" stroke-width="3"/>
+  <path d="M112 96 l40 -20 40 20 -40 20z" fill="#ffffff" stroke="#c9c6d9" stroke-width="3"/>
+  <path d="M112 96 v34 l40 20 v-34z" fill="#eeedf5" stroke="#c9c6d9" stroke-width="3"/>
+  <path d="M192 96 v34 l-40 20 v-34z" fill="#f7f6fb" stroke="#c9c6d9" stroke-width="3"/>
+  <path d="M128 176 l30 -15 30 15 -30 15z" fill="#ffffff" stroke="#c9c6d9" stroke-width="3"/>
+  <path d="M128 176 v24 l30 15 v-24z" fill="#eeedf5" stroke="#c9c6d9" stroke-width="3"/>
+  <path d="M188 176 v24 l-30 15 v-24z" fill="#f7f6fb" stroke="#c9c6d9" stroke-width="3"/>
+</svg>

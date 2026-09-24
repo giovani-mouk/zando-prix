@@ -1,0 +1,302 @@
+<!doctype html>
+<!-- =============================================================
+     public/index.html : page d'accueil, consultation des prix
+     Le HTML ne contient que la structure ; les prix sont ajoutés par
+     /js/accueil.js après appel à l'API.
+     lang="fr" : les lecteurs d'écran lisent le texte avec la bonne prononciation.
+     ============================================================= -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <!-- Sans cette ligne, un téléphone afficherait la page comme un écran
+       d'ordinateur rétréci, avec un texte minuscule. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zando Prix : comparer les prix entre les marchés</title>
+  <meta name="description" content="Comparez les prix des produits de base entre plusieurs marchés et repérez où acheter moins cher.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z' fill='%231d7447'/%3E%3Ccircle cx='8' cy='8' r='1.8' fill='%23fff'/%3E%3C/svg%3E">
+  <!-- preconnect : ouvre la connexion aux serveurs de polices dès le début,
+       pour gagner du temps quand la feuille de style les demandera. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <!-- Icônes Font Awesome (cdnjs), décoratives : le texte suffit sans elles.
+       media="print" puis "all" au chargement : la feuille est téléchargée SANS
+       bloquer l'affichage de la page (sinon, sur une connexion lente, la page
+       resterait blanche en attendant le CDN).
+       integrity (SRI) : empreinte du fichier attendu, écrite par « npm run cdn:integrite ».
+       Le navigateur refuse alors un fichier qui aurait été modifié sur le CDN. -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha384-nRgPTkuX86pH8yjPJUAFuASXQSSl2/bBUiNV47vSYpKFxHJhbcrGnmlYpYJMeD7a" crossorigin="anonymous" referrerpolicy="no-referrer"
+        media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="module" src="/js/menu.js"></script>
+  <!-- type="module" : permet import/export, et le script ne s'exécute qu'une
+       fois le HTML entièrement lu (comme l'attribut defer). -->
+  <script type="module" src="/js/accueil.js"></script>
+</head>
+<body>
+  <!-- Lien d'évitement : invisible jusqu'à ce qu'on appuie sur Tab. Il permet
+       aux personnes naviguant au clavier de sauter l'en-tête. -->
+  <a class="lien-evitement" href="#resultats">Aller directement aux prix</a>
+
+  <header class="entete page">
+    <div class="entete__barre">
+      <a class="marque" href="/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z" fill="currentColor"/><circle cx="8" cy="8" r="1.8" fill="#fff"/></svg>
+        Zando Prix
+      </a>
+      <nav class="navigation" id="navigation" aria-label="Navigation principale">
+        <ul>
+          <li><a href="/" aria-current="page">Les prix</a></li>
+          <li><a href="/a-propos.html">À propos</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <!-- Sur les très petits écrans, le bouton de l'en-tête est masqué : il est ici -->
+          <li class="navigation__proposer"><a href="/?proposer=1" data-proposer>Proposer un prix</a></li>
+        </ul>
+      </nav>
+      <div class="entete__actions">
+        <button type="button" class="bouton bouton--principal" data-proposer><i class="fa-solid fa-plus" aria-hidden="true"></i> Proposer<span class="texte-large"> un prix</span></button>
+        <!-- Menu burger (téléphone) : affiché par /js/menu.js. Sans JavaScript,
+             il reste caché et les liens restent visibles sous le logo. -->
+        <button type="button" class="burger" aria-expanded="false" aria-controls="navigation" hidden>
+          <span class="burger__lignes" aria-hidden="true"></span>
+          <span class="sr-only">Menu</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="entete__contenu" id="entete-contenu">
+      <div class="entete__texte">
+        <p class="surtitre"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Comparateur de prix des marchés de Brazzaville</p>
+        <h1 class="titre">La meilleure platforme pour acheter moins cher&nbsp;?</h1>
+        <p class="chapeau">
+          Zando Prix rassemble les prix des produits de base (riz, manioc, poisson, huile…)
+          relevés dans plusieurs marchés, et les met côte à côte.
+          En un coup d'œil, vous voyez quel marché est le moins cher.
+        </p>
+
+        <!-- Comment ça marche : trois étapes. <ol> car l'ordre compte.
+             Sur téléphone, seuls les titres restent visibles (voir styles.css). -->
+        <ol class="etapes" aria-label="Comment ça marche">
+          <li class="etape">
+            <span class="etape__icone" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <span class="etape__texte">
+              <strong>Cherchez un produit</strong>
+              <span class="etape__detail">Tapez son nom ou choisissez une catégorie.</span>
+            </span>
+          </li>
+          <li class="etape">
+            <span class="etape__icone" aria-hidden="true"><i class="fa-solid fa-scale-balanced"></i></span>
+            <span class="etape__texte">
+              <strong>Comparez les marchés</strong>
+              <span class="etape__detail">Les prix de chaque marché s'affichent côte à côte, avec leur date.</span>
+            </span>
+          </li>
+          <li class="etape">
+            <span class="etape__icone etape__icone--vert" aria-hidden="true"><i class="fa-solid fa-tag"></i></span>
+            <span class="etape__texte">
+              <strong>Achetez au meilleur prix</strong>
+              <span class="etape__detail">L'étiquette verte « Meilleur prix » signale le marché le moins cher.</span>
+            </span>
+          </li>
+        </ol>
+
+        <!-- Chiffres clés, remplis par accueil.js depuis l'API -->
+        <ul class="chiffres" id="chiffres" aria-label="Zando Prix en chiffres" hidden>
+          <li><i class="fa-solid fa-basket-shopping" aria-hidden="true"></i> <strong id="chiffre-produits"></strong> produits suivis</li>
+          <li><i class="fa-solid fa-store" aria-hidden="true"></i> <strong id="chiffre-marches"></strong> marchés</li>
+          <li><i class="fa-regular fa-clock" aria-hidden="true"></i> Dernier relevé&nbsp;: <strong id="chiffre-releve"></strong></li>
+        </ul>
+        <ul class="legende" aria-label="Signification des pastilles">
+          <li><span class="fraicheur fraicheur--recent">Récent</span> relevé il y a moins de 7 jours</li>
+          <li><span class="fraicheur fraicheur--ancien">Ancien</span> relevé il y a 7 jours ou plus</li>
+        </ul>
+      </div>
+
+      <!-- Carrousel (hors cadrage, @a-valider) : grand écran uniquement.
+           Quatre illustrations qui expliquent le site en un coup d'œil.
+           Les images n'ont qu'un data-src : rien n'est téléchargé sur mobile.
+           Pour mettre des photos à la place, voir docs/photos-produits.md. -->
+      <section class="carrousel" id="carrousel" aria-roledescription="carrousel" aria-label="Photos des marchés" hidden>
+        <div class="carrousel__diapos" aria-live="off">
+          <figure class="diapo" aria-roledescription="diapositive" aria-label="1 sur 4">
+            <img data-src="/images/accueil/comparer.svg" alt="" width="1600" height="1000" decoding="async">
+            <figcaption>Les prix de plusieurs marchés, côte à côte</figcaption>
+          </figure>
+          <figure class="diapo" aria-roledescription="diapositive" aria-label="2 sur 4">
+            <img data-src="/images/accueil/meilleur-prix.svg" alt="" width="1600" height="1000" decoding="async">
+            <figcaption>Le meilleur prix est signalé en vert</figcaption>
+          </figure>
+          <figure class="diapo" aria-roledescription="diapositive" aria-label="3 sur 4">
+            <img data-src="/images/accueil/fraicheur.svg" alt="" width="1600" height="1000" decoding="async">
+            <figcaption>Chaque prix est daté : récent ou ancien</figcaption>
+          </figure>
+          <figure class="diapo" aria-roledescription="diapositive" aria-label="4 sur 4">
+            <img data-src="/images/accueil/proposer.svg" alt="" width="1600" height="1000" decoding="async">
+            <figcaption>Vu un prix au marché ? Proposez-le</figcaption>
+          </figure>
+        </div>
+        <div class="carrousel__commandes">
+          <div class="carrousel__points" role="group" aria-label="Choisir une photo"></div>
+          <button type="button" class="bouton bouton--discret bouton--compact carrousel__pause">Mettre en pause</button>
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <main class="page">
+    <h2 class="titre-section" id="titre-prix">
+      <i class="fa-solid fa-list-ul" aria-hidden="true"></i> Les prix, marché par marché
+    </h2>
+    <!-- Filtres. Chaque champ a un <label for="…"> relié à son id : cliquer sur
+         le libellé active le champ, et les lecteurs d'écran annoncent son nom. -->
+    <form class="filtres" id="filtres" role="search">
+      <div class="champ">
+        <label for="recherche">Rechercher un produit</label>
+        <input id="recherche" name="q" type="search" placeholder="Riz, manioc, tomate…" autocomplete="off" enterkeyhint="search">
+      </div>
+      <div class="champ">
+        <label for="filtre-produit">Produit</label>
+        <select id="filtre-produit" name="produit">
+          <option value="">Tous</option>
+        </select>
+      </div>
+      <div class="champ">
+        <label for="filtre-marche">Marché</label>
+        <select id="filtre-marche" name="marche">
+          <option value="">Tous</option>
+        </select>
+      </div>
+      <button type="button" class="bouton bouton--discret" id="effacer-filtres" hidden>Effacer les filtres</button>
+
+      <!-- fieldset + legend : regroupe les boutons radio sous un intitulé commun.
+           hidden tant que le script n'a pas construit les puces. -->
+      <fieldset class="categories" id="categories" hidden>
+        <legend>Catégorie</legend>
+        <div class="puces" id="puces-categories"></div>
+      </fieldset>
+    </form>
+
+    <!-- role="status" + aria-live : chaque fois que le script change ce texte
+         (« 3 produits affichés »), les lecteurs d'écran l'annoncent, sans
+         déplacer le focus de l'utilisateur. -->
+    <p class="resume" id="resume" role="status" aria-live="polite"></p>
+
+    <!-- Les planches de prix sont insérées ici par accueil.js.
+         tabindex="-1" : la zone peut recevoir le focus (lien d'évitement)
+         sans être ajoutée à la navigation par Tab. -->
+    <section class="resultats" id="resultats" aria-label="Prix par produit" aria-busy="true" tabindex="-1">
+      <p class="chargement">Chargement des prix…</p>
+    </section>
+  </main>
+
+  <footer class="pied">
+    <div class="pied__contenu page">
+      <div class="pied__marque">
+        <a class="marque marque--pied" href="/">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z" fill="currentColor"/><circle cx="8" cy="8" r="1.8" fill="#fff"/></svg>
+          Zando Prix
+        </a>
+        <p>Zando Prix compare les prix des produits de base entre plusieurs marchés, pour savoir où acheter moins cher.</p>
+      </div>
+
+      <nav class="pied__colonne" aria-label="Liens du site">
+        <h2 class="pied__titre">Le site</h2>
+        <ul>
+          <li><a href="/">Consulter les prix</a></li>
+          <li><a href="/?proposer=1" data-proposer>Proposer un prix</a></li>
+          <li><a href="/a-propos.html">À propos</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/admin.html">Espace administrateur</a></li>
+        </ul>
+      </nav>
+
+      <div class="pied__colonne">
+        <h2 class="pied__titre">À propos des prix</h2>
+        <ul>
+          <li>Les montants sont en francs CFA (FCFA).</li>
+          <li>Chaque prix est daté du jour où il a été relevé.</li>
+          <li>« Récent » : relevé il y a moins de 7 jours. « Ancien » : 7 jours ou plus.</li>
+          <li>Un prix proposé par un utilisateur n'est publié qu'après vérification.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pied__bas page">
+      <p>© 2026 Zando Prix</p>
+    </div>
+  </footer>
+
+  <!-- Dialogue « Proposer un prix » (story 7), piloté par /js/proposition.js.
+       novalidate sur le formulaire : on laisse l'API valider (une seule
+       source de vérité) et on affiche ses messages sous les champs. -->
+  <dialog class="dialogue" id="proposition" aria-labelledby="proposition-titre">
+    <div class="dialogue__contenu" id="proposition-formulaire">
+      <div>
+        <h2 class="dialogue__titre" id="proposition-titre">Proposer un prix</h2>
+        <p class="dialogue__aide">
+          Vous avez vu un prix au marché&nbsp;? Partagez-le. Il sera vérifié avant d'être publié
+          et ne remplace pas les prix affichés en attendant.
+        </p>
+      </div>
+
+      <form class="formulaire" novalidate>
+        <p class="alerte" id="proposition-erreur" role="alert" hidden></p>
+
+        <div class="champ">
+          <label for="p-produit">Produit</label>
+          <select id="p-produit" name="produit_id" aria-describedby="erreur-produit_id"></select>
+          <p class="erreur" id="erreur-produit_id" hidden></p>
+        </div>
+
+        <div class="champ">
+          <label for="p-marche">Marché</label>
+          <select id="p-marche" name="marche_id" aria-describedby="erreur-marche_id"></select>
+          <p class="erreur" id="erreur-marche_id" hidden></p>
+        </div>
+
+        <div class="formulaire__ligne">
+          <div class="champ">
+            <label for="p-montant">Prix en FCFA</label>
+            <input id="p-montant" name="montant" type="text" inputmode="numeric" autocomplete="off" placeholder="750" aria-describedby="erreur-montant">
+            <p class="erreur" id="erreur-montant" hidden></p>
+          </div>
+          <div class="champ">
+            <label for="p-unite">Vendu</label>
+            <select id="p-unite" name="unite" aria-describedby="erreur-unite"></select>
+            <p class="erreur" id="erreur-unite" hidden></p>
+          </div>
+        </div>
+
+        <div class="champ">
+          <label for="p-date">Date où vous avez vu ce prix</label>
+          <input id="p-date" name="date_constat" type="date" aria-describedby="erreur-date_constat">
+          <p class="erreur" id="erreur-date_constat" hidden></p>
+        </div>
+
+        <div class="champ">
+          <label for="p-auteur">Votre nom ou pseudo <span class="facultatif">(facultatif)</span></label>
+          <input id="p-auteur" name="auteur" type="text" autocomplete="nickname" maxlength="100" aria-describedby="erreur-auteur">
+          <p class="erreur" id="erreur-auteur" hidden></p>
+        </div>
+
+        <div class="dialogue__actions">
+          <button type="button" class="bouton bouton--secondaire" data-fermer>Annuler</button>
+          <button type="submit" class="bouton bouton--principal">Envoyer la proposition</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="dialogue__contenu" id="proposition-merci" hidden>
+      <div>
+        <h2 class="dialogue__titre" tabindex="-1">Proposition envoyée</h2>
+        <p class="dialogue__aide" id="merci-message"></p>
+      </div>
+      <p class="recapitulatif" id="merci-recapitulatif"></p>
+      <div class="dialogue__actions">
+        <button type="button" class="bouton bouton--secondaire" data-recommencer>Proposer un autre prix</button>
+        <button type="button" class="bouton bouton--principal" data-fermer>Fermer</button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

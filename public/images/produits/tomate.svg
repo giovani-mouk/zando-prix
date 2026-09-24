@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Tomate">
+  <title>Tomate</title>
+  <rect width="240" height="240" rx="36" fill="#e2f0dc"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <circle cx="120" cy="128" r="64" fill="#d93a2b"/>
+  <path d="M84 96 q14 -18 36 -18" stroke="#fff" stroke-opacity=".35" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <path d="M120 64 l10 18 20 -6 -12 16 18 10 -22 2 -4 20 -10 -18 -10 18 -4 -20 -22 -2 18 -10 -12 -16 20 6z" fill="#2f8a3e"/>
+  <path d="M120 70 q2 -14 12 -22" stroke="#2f8a3e" stroke-width="6" stroke-linecap="round" fill="none"/>
+</svg>

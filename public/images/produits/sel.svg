@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Sel">
+  <title>Sel</title>
+  <rect width="240" height="240" rx="36" fill="#e8e6f3"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <path d="M92 70 q0 -26 28 -26 q28 0 28 26z" fill="#9aa3b5"/>
+  <circle cx="110" cy="58" r="3" fill="#fff"/><circle cx="120" cy="54" r="3" fill="#fff"/><circle cx="130" cy="58" r="3" fill="#fff"/>
+  <path d="M86 70 h68 l10 110 q0 14 -14 14 h-60 q-14 0 -14 -14z" fill="#ffffff" stroke="#b9bfd0" stroke-width="4"/>
+  <path d="M90 120 h60 l6 58 q0 8 -8 8 h-56 q-8 0 -8 -8z" fill="#e8ecf5"/>
+  <path d="M100 90 q-4 40 0 80" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+  <ellipse cx="168.3" cy="181.3" rx="3.0" ry="3.0" transform="rotate(119 168.3 181.3)" fill="#ffffff"/>
+  <ellipse cx="164.6" cy="181.7" rx="3.0" ry="3.0" transform="rotate(48 164.6 181.7)" fill="#ffffff"/>
+  <ellipse cx="190.3" cy="183.9" rx="3.0" ry="3.0" transform="rotate(161 190.3 183.9)" fill="#ffffff"/>
+  <ellipse cx="176.8" cy="178.3" rx="3.0" ry="3.0" transform="rotate(114 176.8 178.3)" fill="#ffffff"/>
+  <ellipse cx="181.8" cy="181.7" rx="3.0" ry="3.0" transform="rotate(177 181.8 181.7)" fill="#ffffff"/>
+  <ellipse cx="172.7" cy="176.5" rx="3.0" ry="3.0" transform="rotate(101 172.7 176.5)" fill="#ffffff"/>
+  <ellipse cx="201.4" cy="178.9" rx="3.0" ry="3.0" transform="rotate(157 201.4 178.9)" fill="#ffffff"/>
+  <ellipse cx="173.8" cy="176.2" rx="3.0" ry="3.0" transform="rotate(135 173.8 176.2)" fill="#ffffff"/>
+  <ellipse cx="187.8" cy="180.4" rx="3.0" ry="3.0" transform="rotate(61 187.8 180.4)" fill="#ffffff"/>
+  <ellipse cx="168.3" cy="176.9" rx="3.0" ry="3.0" transform="rotate(83 168.3 176.9)" fill="#ffffff"/>
+  <ellipse cx="165.2" cy="182.0" rx="3.0" ry="3.0" transform="rotate(132 165.2 182.0)" fill="#ffffff"/>
+  <ellipse cx="185.2" cy="183.2" rx="3.0" ry="3.0" transform="rotate(1 185.2 183.2)" fill="#ffffff"/>
+  <ellipse cx="176.2" cy="176.5" rx="3.0" ry="3.0" transform="rotate(71 176.2 176.5)" fill="#ffffff"/>
+  <ellipse cx="170.4" cy="182.5" rx="3.0" ry="3.0" transform="rotate(21 170.4 182.5)" fill="#ffffff"/>
+</svg>

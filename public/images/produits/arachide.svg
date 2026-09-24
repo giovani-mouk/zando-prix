@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Arachide">
+  <title>Arachide</title>
+  <rect width="240" height="240" rx="36" fill="#f3e7d5"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+
+  <path d="M88 60 q-22 0 -22 24 q0 14 10 20 q-8 8 -8 20 q0 24 22 24 q22 0 22 -24 q0 -12 -8 -20 q10 -6 10 -20 q0 -24 -22 -24z" fill="#d8b27a" stroke="#a9824b" stroke-width="3" transform="rotate(-25 88 104)"/>
+  <path d="M146 64 q-22 0 -22 24 q0 14 10 20 q-8 8 -8 20 q0 24 22 24 q22 0 22 -24 q0 -12 -8 -20 q10 -6 10 -20 q0 -24 -22 -24z" fill="#d8b27a" stroke="#a9824b" stroke-width="3" transform="rotate(20 146 108)"/>
+  <path d="M116 92 q-22 0 -22 24 q0 14 10 20 q-8 8 -8 20 q0 24 22 24 q22 0 22 -24 q0 -12 -8 -20 q10 -6 10 -20 q0 -24 -22 -24z" fill="#d8b27a" stroke="#a9824b" stroke-width="3" transform="rotate(80 116 136)"/>
+  <ellipse cx="125.7" cy="183.8" rx="5.0" ry="3.5" transform="rotate(32 125.7 183.8)" fill="#b5652b"/>
+  <ellipse cx="122.9" cy="177.6" rx="5.0" ry="3.5" transform="rotate(35 122.9 177.6)" fill="#b5652b"/>
+  <ellipse cx="120.6" cy="184.0" rx="5.0" ry="3.5" transform="rotate(53 120.6 184.0)" fill="#b5652b"/>
+  <ellipse cx="114.3" cy="176.8" rx="5.0" ry="3.5" transform="rotate(124 114.3 176.8)" fill="#b5652b"/>
+  <ellipse cx="93.1" cy="177.6" rx="5.0" ry="3.5" transform="rotate(49 93.1 177.6)" fill="#b5652b"/>
+  <ellipse cx="140.3" cy="172.9" rx="5.0" ry="3.5" transform="rotate(124 140.3 172.9)" fill="#b5652b"/>
+  <ellipse cx="120.6" cy="177.1" rx="5.0" ry="3.5" transform="rotate(68 120.6 177.1)" fill="#b5652b"/>
+  <ellipse cx="92.7" cy="175.3" rx="5.0" ry="3.5" transform="rotate(97 92.7 175.3)" fill="#b5652b"/>
+  <ellipse cx="115.1" cy="169.6" rx="5.0" ry="3.5" transform="rotate(24 115.1 169.6)" fill="#b5652b"/>
+  <ellipse cx="130.0" cy="175.9" rx="5.0" ry="3.5" transform="rotate(158 130.0 175.9)" fill="#b5652b"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Chinchard">
+  <title>Chinchard</title>
+  <rect width="240" height="240" rx="36" fill="#dde9f2"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <path d="M36 122 q52 -58 120 -30 l40 -26 q-8 34 0 64 l-40 -26 q-68 28 -120 18z" fill="#6f8fa8"/>
+  <path d="M40 124 q56 26 116 -2 q-60 16 -116 2z" fill="#dfe8ef"/>
+  <path d="M104 94 q14 -22 34 -18 q-8 10 -10 24z" fill="#4f6f88"/>
+  <path d="M100 142 q10 14 26 14 q-6 -8 -6 -18z" fill="#4f6f88"/>
+  <circle cx="62" cy="112" r="7" fill="#fff"/><circle cx="63" cy="112" r="4" fill="#1b2238"/>
+  <path d="M82 102 q6 12 0 26" stroke="#4f6f88" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M60 120 q50 -10 110 -6" stroke="#e7c547" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

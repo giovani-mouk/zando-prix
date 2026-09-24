@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Œufs">
+  <title>Œufs</title>
+  <rect width="240" height="240" rx="36" fill="#f7e1d9"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+
+  <ellipse cx="86" cy="132" rx="30" ry="38" fill="#f1dcc0"/>
+  <ellipse cx="76" cy="118" rx="7" ry="11" fill="#fff" opacity=".5"/>
+  <ellipse cx="154" cy="132" rx="30" ry="38" fill="#ead0ae"/>
+  <ellipse cx="144" cy="118" rx="7" ry="11" fill="#fff" opacity=".5"/>
+  <ellipse cx="120" cy="112" rx="30" ry="38" fill="#f6e7d2"/>
+  <ellipse cx="110" cy="98" rx="7" ry="11" fill="#fff" opacity=".5"/>
+</svg>

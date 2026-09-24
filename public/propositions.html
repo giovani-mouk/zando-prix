@@ -1,0 +1,183 @@
+<!doctype html>
+<!-- =============================================================
+     public/propositions.html : espace administrateur
+     Cette page est publique (c'est un fichier statique), mais elle est
+     vide sans l'API : les propositions ne sont renvoyées qu'à un
+     administrateur connecté. Script : /js/responsable.js
+     ============================================================= -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administration : Zando Prix</title>
+  <!-- Demande aux moteurs de recherche de ne pas référencer cette page -->
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z' fill='%231d7447'/%3E%3Ccircle cx='8' cy='8' r='1.8' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="module" src="/js/responsable.js"></script>
+</head>
+<body>
+  <header class="entete page">
+    <div class="entete__barre">
+      <a class="marque" href="/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z" fill="currentColor"/><circle cx="8" cy="8" r="1.8" fill="#fff"/></svg>
+        Zando Prix
+      </a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <ul>
+          <li><a href="/">Les prix</a></li>
+          <li><a href="/propositions.html" aria-current="page">Administration</a></li>
+        </ul>
+      </nav>
+      <!-- Rempli et affiché par le script une fois la session confirmée -->
+      <div class="session" id="session" hidden>
+        <span class="session__nom" id="session-nom"></span>
+        <button type="button" class="bouton bouton--secondaire bouton--compact" id="deconnexion">Se déconnecter</button>
+      </div>
+    </div>
+
+    <h1 class="titre titre--page">Propositions reçues</h1>
+    <p class="chapeau">
+      Corrigez, publiez ou supprimez les prix proposés par les utilisateurs.
+      Une proposition publiée devient le prix affiché pour ce produit dans ce marché.
+      Une proposition supprimée reste dans l'historique.
+    </p>
+  </header>
+
+  <!-- Masqué jusqu'à ce que la connexion soit confirmée par l'API.
+       La vraie protection est côté serveur : sans session, l'API ne renvoie rien. -->
+  <main class="page" id="contenu" hidden>
+    <div class="onglets" role="group" aria-label="Afficher les propositions">
+      <button type="button" class="onglet" data-statut="en_attente" aria-pressed="true">En attente <span class="compteur"></span></button>
+      <button type="button" class="onglet" data-statut="validee" aria-pressed="false">Publiées <span class="compteur"></span></button>
+      <button type="button" class="onglet" data-statut="rejetee" aria-pressed="false">Rejetées <span class="compteur"></span></button>
+      <button type="button" class="onglet" data-statut="" aria-pressed="false">Toutes <span class="compteur"></span></button>
+    </div>
+
+    <!-- Messages de confirmation (« Proposition publiée… »), annoncés aux lecteurs d'écran -->
+    <p class="annonce" id="annonce" role="status" aria-live="polite" tabindex="-1"></p>
+
+    <div class="tableau-conteneur" id="conteneur-tableau">
+      <table class="tableau">
+        <caption class="sr-only">Propositions de prix</caption>
+        <thead>
+          <tr>
+            <th scope="col">Reçue le</th>
+            <th scope="col">Produit</th>
+            <th scope="col">Marché</th>
+            <th scope="col" class="nombre">Prix proposé</th>
+            <th scope="col">Vu le</th>
+            <th scope="col">Par</th>
+            <th scope="col">Statut</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="lignes"></tbody>
+      </table>
+    </div>
+    <p class="vide vide--simple" id="aucune" hidden></p>
+  </main>
+
+  <footer class="pied">
+    <div class="pied__contenu page">
+      <div class="pied__marque">
+        <a class="marque marque--pied" href="/">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z" fill="currentColor"/><circle cx="8" cy="8" r="1.8" fill="#fff"/></svg>
+          Zando Prix
+        </a>
+        <p>Zando Prix compare les prix des produits de base entre plusieurs marchés, pour savoir où acheter moins cher.</p>
+      </div>
+
+      <nav class="pied__colonne" aria-label="Liens du site">
+        <h2 class="pied__titre">Le site</h2>
+        <ul>
+          <li><a href="/">Consulter les prix</a></li>
+          <li><a href="/?proposer=1" data-proposer>Proposer un prix</a></li>
+          <li><a href="/propositions.html">Administration</a></li>
+        </ul>
+      </nav>
+
+      <div class="pied__colonne">
+        <h2 class="pied__titre">À propos des prix</h2>
+        <ul>
+          <li>Les montants sont en francs CFA (FCFA).</li>
+          <li>Chaque prix est daté du jour où il a été relevé.</li>
+          <li>« Récent » : relevé il y a moins de 7 jours. « Ancien » : 7 jours ou plus.</li>
+          <li>Un prix proposé par un utilisateur n'est publié qu'après vérification.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pied__bas page">
+      <p>© 2026 Zando Prix</p>
+    </div>
+  </footer>
+
+  <!-- Corriger une proposition avant publication -->
+  <dialog class="dialogue" id="correction" aria-labelledby="correction-titre">
+    <div class="dialogue__contenu">
+      <div>
+        <h2 class="dialogue__titre" id="correction-titre">Corriger la proposition</h2>
+        <p class="dialogue__aide" id="correction-aide"></p>
+      </div>
+
+      <form class="formulaire" novalidate>
+        <p class="alerte" id="correction-erreur" role="alert" hidden></p>
+
+        <div class="champ">
+          <label for="c-produit">Produit</label>
+          <select id="c-produit" name="produit_id" aria-describedby="c-erreur-produit_id"></select>
+          <p class="erreur" id="c-erreur-produit_id" hidden></p>
+        </div>
+
+        <div class="champ">
+          <label for="c-marche">Marché</label>
+          <select id="c-marche" name="marche_id" aria-describedby="c-erreur-marche_id"></select>
+          <p class="erreur" id="c-erreur-marche_id" hidden></p>
+        </div>
+
+        <div class="formulaire__ligne">
+          <div class="champ">
+            <label for="c-montant">Prix en FCFA</label>
+            <input id="c-montant" name="montant" type="text" inputmode="numeric" autocomplete="off" aria-describedby="c-erreur-montant">
+            <p class="erreur" id="c-erreur-montant" hidden></p>
+          </div>
+          <div class="champ">
+            <label for="c-unite">Vendu</label>
+            <select id="c-unite" name="unite" aria-describedby="c-erreur-unite"></select>
+            <p class="erreur" id="c-erreur-unite" hidden></p>
+          </div>
+        </div>
+
+        <div class="champ">
+          <label for="c-date">Date où le prix a été vu</label>
+          <input id="c-date" name="date_constat" type="date" aria-describedby="c-erreur-date_constat">
+          <p class="erreur" id="c-erreur-date_constat" hidden></p>
+        </div>
+
+        <div class="dialogue__actions">
+          <button type="button" class="bouton bouton--secondaire" data-fermer>Annuler</button>
+          <button type="submit" class="bouton bouton--principal">Enregistrer la correction</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Confirmer une suppression -->
+  <dialog class="dialogue dialogue--etroit" id="suppression" aria-labelledby="suppression-titre" aria-describedby="suppression-aide">
+    <div class="dialogue__contenu">
+      <div>
+        <h2 class="dialogue__titre" id="suppression-titre">Supprimer cette proposition ?</h2>
+        <p class="dialogue__aide" id="suppression-aide"></p>
+      </div>
+      <p class="alerte" id="suppression-erreur" role="alert" hidden></p>
+      <div class="dialogue__actions">
+        <button type="button" class="bouton bouton--secondaire" data-fermer>Annuler</button>
+        <button type="button" class="bouton bouton--rejeter" id="suppression-confirmer">Supprimer</button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

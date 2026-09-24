@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="Les prix de plusieurs marchés, côte à côte">
+  <title>Les prix de plusieurs marchés, côte à côte</title>
+  <defs>
+    <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4efe6"/><stop offset="1" stop-color="#e6efe9"/></linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#ciel)"/>
+  <circle cx="1380" cy="170" r="90" fill="#f7d774" opacity=".55"/>
+  <rect y="800" width="1600" height="200" fill="#d9cdb8"/>
+  <rect y="800" width="1600" height="14" fill="#c7b89d"/>
+  <g>
+    <rect x="140" y="250" width="200" height="44" rx="22" fill="#e2f1e7"/><text x="240" y="280" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="24" font-weight="700" fill="#1d7447">Meilleur prix</text>
+    <rect x="120" y="300" width="240" height="96" rx="16" fill="#1d7447"/>
+    <text x="240" y="362" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="46" font-weight="800" fill="#fff">750</text>
+    <path d="M240 396 v24" stroke="#1d7447" stroke-width="6"/>
+    <path d="M80 420 h40 v60 q-20 22 -40 0z" fill="#2350a0"/><path d="M120 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M160 420 h40 v60 q-20 22 -40 0z" fill="#2350a0"/><path d="M200 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M240 420 h40 v60 q-20 22 -40 0z" fill="#2350a0"/><path d="M280 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M320 420 h40 v60 q-20 22 -40 0z" fill="#2350a0"/><path d="M360 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/>
+    <rect x="94" y="470" width="12" height="340" fill="#8a6a44"/><rect x="374" y="470" width="12" height="340" fill="#8a6a44"/>
+    <rect x="80" y="640" width="320" height="30" rx="6" fill="#a47a4c"/>
+    <rect x="90" y="670" width="300" height="140" fill="#8a6a44"/>
+    <path d="M120 640 q-6 -70 14 -84 h52 q20 14 14 84z" fill="#efe6d2" stroke="#c9bb9d" stroke-width="4"/><path d="M205 640 q-6 -70 14 -84 h52 q20 14 14 84z" fill="#efe6d2" stroke="#c9bb9d" stroke-width="4"/><path d="M290 640 q-6 -70 14 -84 h52 q20 14 14 84z" fill="#efe6d2" stroke="#c9bb9d" stroke-width="4"/>
+    <text x="240" y="752" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="32" font-weight="700" fill="#fff">Marché Total</text>
+  </g>  <g>
+    
+    <rect x="500" y="300" width="240" height="96" rx="16" fill="#1b2238"/>
+    <text x="620" y="362" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="46" font-weight="800" fill="#fff">800</text>
+    <path d="M620 396 v24" stroke="#1b2238" stroke-width="6"/>
+    <path d="M460 420 h40 v60 q-20 22 -40 0z" fill="#d93a2b"/><path d="M500 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M540 420 h40 v60 q-20 22 -40 0z" fill="#d93a2b"/><path d="M580 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M620 420 h40 v60 q-20 22 -40 0z" fill="#d93a2b"/><path d="M660 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M700 420 h40 v60 q-20 22 -40 0z" fill="#d93a2b"/><path d="M740 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/>
+    <rect x="474" y="470" width="12" height="340" fill="#8a6a44"/><rect x="754" y="470" width="12" height="340" fill="#8a6a44"/>
+    <rect x="460" y="640" width="320" height="30" rx="6" fill="#a47a4c"/>
+    <rect x="470" y="670" width="300" height="140" fill="#8a6a44"/>
+    <circle cx="520" cy="615" r="30" fill="#d93a2b"/><circle cx="570" cy="597" r="30" fill="#d93a2b"/><circle cx="620" cy="615" r="30" fill="#d93a2b"/><circle cx="670" cy="597" r="30" fill="#d93a2b"/><circle cx="720" cy="615" r="30" fill="#d93a2b"/>
+    <text x="620" y="752" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="32" font-weight="700" fill="#fff">Poto-Poto</text>
+  </g>  <g>
+    
+    <rect x="880" y="300" width="240" height="96" rx="16" fill="#1b2238"/>
+    <text x="1000" y="362" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="46" font-weight="800" fill="#fff">950</text>
+    <path d="M1000 396 v24" stroke="#1b2238" stroke-width="6"/>
+    <path d="M840 420 h40 v60 q-20 22 -40 0z" fill="#1d7447"/><path d="M880 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M920 420 h40 v60 q-20 22 -40 0z" fill="#1d7447"/><path d="M960 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M1000 420 h40 v60 q-20 22 -40 0z" fill="#1d7447"/><path d="M1040 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M1080 420 h40 v60 q-20 22 -40 0z" fill="#1d7447"/><path d="M1120 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/>
+    <rect x="854" y="470" width="12" height="340" fill="#8a6a44"/><rect x="1134" y="470" width="12" height="340" fill="#8a6a44"/>
+    <rect x="840" y="640" width="320" height="30" rx="6" fill="#a47a4c"/>
+    <rect x="850" y="670" width="300" height="140" fill="#8a6a44"/>
+    <path d="M870 620 q120 -40 250 -10 q-120 14 -250 30z" fill="#8a5a33"/><path d="M870 604 q120 -40 250 -10 q-120 14 -250 30z" fill="#9c6a3f"/><path d="M870 588 q120 -40 250 -10 q-120 14 -250 30z" fill="#7a4e2c"/>
+    <text x="1000" y="752" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="32" font-weight="700" fill="#fff">Moungali</text>
+  </g>  <g>
+    
+    <rect x="1260" y="300" width="240" height="96" rx="16" fill="#1b2238"/>
+    <text x="1380" y="362" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="46" font-weight="800" fill="#fff">1 050</text>
+    <path d="M1380 396 v24" stroke="#1b2238" stroke-width="6"/>
+    <path d="M1220 420 h40 v60 q-20 22 -40 0z" fill="#e0932a"/><path d="M1260 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M1300 420 h40 v60 q-20 22 -40 0z" fill="#e0932a"/><path d="M1340 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M1380 420 h40 v60 q-20 22 -40 0z" fill="#e0932a"/><path d="M1420 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/><path d="M1460 420 h40 v60 q-20 22 -40 0z" fill="#e0932a"/><path d="M1500 420 h40 v60 q-20 22 -40 0z" fill="#f4f1ea"/>
+    <rect x="1234" y="470" width="12" height="340" fill="#8a6a44"/><rect x="1514" y="470" width="12" height="340" fill="#8a6a44"/>
+    <rect x="1220" y="640" width="320" height="30" rx="6" fill="#a47a4c"/>
+    <rect x="1230" y="670" width="300" height="140" fill="#8a6a44"/>
+    <path d="M1260 600 q60 -34 150 -12 l40 -18 v48 l-40 -18 q-90 22 -150 0z" fill="#6f8fa8"/><path d="M1260 614 q60 -34 150 -12 l40 -18 v48 l-40 -18 q-90 22 -150 0z" fill="#8a5a2b"/>
+    <text x="1380" y="752" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="32" font-weight="700" fill="#fff">Ouenzé</text>
+  </g>
+</svg>

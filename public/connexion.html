@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- =============================================================
+     public/connexion.html : connexion à l'espace administrateur
+     Script : /js/connexion.js
+     ============================================================= -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion : Zando Prix</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z' fill='%231d7447'/%3E%3Ccircle cx='8' cy='8' r='1.8' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="module" src="/js/connexion.js"></script>
+</head>
+<body class="corps-connexion">
+  <main class="connexion">
+    <a class="marque" href="/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z" fill="currentColor"/><circle cx="8" cy="8" r="1.8" fill="#fff"/></svg>
+        Zando Prix
+      </a>
+
+    <div class="connexion__carte">
+      <h1 class="connexion__titre">Espace administrateur</h1>
+      <p class="dialogue__aide">Réservé à l'équipe Zando Prix, pour vérifier et publier les prix proposés.</p>
+
+      <form class="formulaire" id="formulaire-connexion" novalidate>
+        <p class="alerte" id="connexion-erreur" role="alert" hidden></p>
+
+        <div class="champ">
+          <label for="email">E-mail</label>
+          <!-- autocomplete="username" / "current-password" : les gestionnaires de
+               mots de passe reconnaissent le formulaire et peuvent le remplir.
+               autocapitalize="none" : le téléphone ne met pas de majuscule au début. -->
+          <input id="email" name="email" type="email" autocomplete="username" required maxlength="254" autocapitalize="none" spellcheck="false">
+        </div>
+
+        <div class="champ">
+          <label for="mot-de-passe">Mot de passe</label>
+          <input id="mot-de-passe" name="mot_de_passe" type="password" autocomplete="current-password" required maxlength="128">
+        </div>
+
+        <button type="submit" class="bouton bouton--principal">Se connecter</button>
+      </form>
+    </div>
+
+    <p class="connexion__retour"><a href="/">← Retour aux prix</a></p>
+  </main>
+</body>
+</html>

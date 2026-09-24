@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Farine de blé">
+  <title>Farine de blé</title>
+  <rect width="240" height="240" rx="36" fill="#f6ecd2"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <path d="M64 70 q56 -22 112 0 l10 112 q-66 22 -132 0z" fill="#f4efe4" stroke="#c9bb9d" stroke-width="4"/>
+  <path d="M64 70 q56 16 112 0" stroke="#c9bb9d" stroke-width="4" fill="none"/>
+  <path d="M120 170 v-72" stroke="#c48a2c" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="110" cy="108" rx="7" ry="12" transform="rotate(-30 110 108)" fill="#d9a441"/>
+  <ellipse cx="130" cy="108" rx="7" ry="12" transform="rotate(30 130 108)" fill="#d9a441"/>
+  <ellipse cx="110" cy="126" rx="7" ry="12" transform="rotate(-30 110 126)" fill="#d9a441"/>
+  <ellipse cx="130" cy="126" rx="7" ry="12" transform="rotate(30 130 126)" fill="#d9a441"/>
+  <ellipse cx="110" cy="144" rx="7" ry="12" transform="rotate(-30 110 144)" fill="#d9a441"/>
+  <ellipse cx="130" cy="144" rx="7" ry="12" transform="rotate(30 130 144)" fill="#d9a441"/>
+  <ellipse cx="120" cy="96" rx="6" ry="11" fill="#d9a441"/>
+</svg>

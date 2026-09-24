@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Chikwangue">
+  <title>Chikwangue</title>
+  <rect width="240" height="240" rx="36" fill="#efe3d3"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <path d="M40 132 q0 -34 40 -38 l90 -10 q34 0 34 34 q0 34 -34 36 l-90 10 q-40 0 -40 -32z" fill="#6f9a3a"/>
+  <path d="M60 110 q60 -8 120 -12 M56 150 q66 -6 128 -14" stroke="#557a2a" stroke-width="3" fill="none"/>
+  <path d="M84 96 v58 M128 90 v58 M168 88 v54" stroke="#c9a66b" stroke-width="7" stroke-linecap="round"/>
+  <path d="M196 116 q22 -10 14 -30 M196 124 q24 8 20 26" stroke="#6f9a3a" stroke-width="7" stroke-linecap="round" fill="none"/>
+</svg>

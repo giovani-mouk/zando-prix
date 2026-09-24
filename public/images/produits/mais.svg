@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Maïs">
+  <title>Maïs</title>
+  <rect width="240" height="240" rx="36" fill="#f6ecd2"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <path d="M78 196 q-30 -60 30 -150 q6 70 -8 150z" fill="#4f9a3c"/>
+  <path d="M162 196 q30 -60 -30 -150 q-6 70 8 150z" fill="#3f8a32"/>
+  <rect x="94" y="40" width="52" height="150" rx="26" fill="#f2c230"/>
+  <circle cx="113" cy="56" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="127" cy="56" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="106" cy="70" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="120" cy="70" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="134" cy="70" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="113" cy="84" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="127" cy="84" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="106" cy="98" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="120" cy="98" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="134" cy="98" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="113" cy="112" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="127" cy="112" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="106" cy="126" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="120" cy="126" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="134" cy="126" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="113" cy="140" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="127" cy="140" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="106" cy="154" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="120" cy="154" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="134" cy="154" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="113" cy="168" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <circle cx="127" cy="168" r="6.5" fill="#f7d65a" stroke="#d9a61a" stroke-width="1.5"/>
+  <path d="M100 196 q-20 -40 -2 -90 q10 50 22 90z" fill="#5fae48"/>
+</svg>

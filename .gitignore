@@ -1,0 +1,7 @@
+
+# Rapport HTML généré par « npm test » : un résultat, pas du code source
+reports/
+# Lien local avec le projet Vercel, propre à chaque machine
+.vercel/
+.env
+.env.example

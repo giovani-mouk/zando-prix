@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Oignon">
+  <title>Oignon</title>
+  <rect width="240" height="240" rx="36" fill="#e2f0dc"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <path d="M120 44 q-8 22 -8 30 q-58 20 -58 72 q0 44 66 46 q66 -2 66 -46 q0 -52 -58 -72 q0 -8 -8 -30z" fill="#b0476a"/>
+  <path d="M120 78 q-30 30 -26 110 M120 78 q30 30 26 110 M120 78 v112" stroke="#8a2f50" stroke-width="3" fill="none" opacity=".6"/>
+  <path d="M84 120 q6 -20 22 -30" stroke="#fff" stroke-opacity=".35" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M108 192 l-8 10 M120 192 v12 M132 192 l8 10" stroke="#d6c3a0" stroke-width="3" stroke-linecap="round"/>
+</svg>

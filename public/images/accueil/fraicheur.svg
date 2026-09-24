@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="Chaque prix est daté : récent ou ancien">
+  <title>Chaque prix est daté : récent ou ancien</title>
+  <defs>
+    <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f0ea"/><stop offset="1" stop-color="#e8ede9"/></linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#ciel)"/>
+  <circle cx="1380" cy="170" r="90" fill="#f7d774" opacity=".55"/>
+  <rect y="800" width="1600" height="200" fill="#d9cdb8"/>
+  <rect y="800" width="1600" height="14" fill="#c7b89d"/>
+  <rect x="200" y="200" width="620" height="560" rx="30" fill="#ffffff" stroke="#d3dad5" stroke-width="4"/>
+  <rect x="200" y="200" width="620" height="120" rx="30" fill="#2350a0"/>
+  <rect x="200" y="280" width="620" height="40" fill="#2350a0"/>
+  <text x="510" y="280" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="52" font-weight="800" fill="#fff">Septembre</text>
+  <rect x="300" y="170" width="24" height="70" rx="12" fill="#1b2238"/><rect x="696" y="170" width="24" height="70" rx="12" fill="#1b2238"/>
+  <rect x="240" y="420" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="318" y="420" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="396" y="420" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="474" y="420" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="552" y="420" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="630" y="420" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="708" y="420" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="240" y="490" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="318" y="490" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="396" y="490" width="62" height="54" rx="10" fill="#f8e3cf"/><rect x="474" y="490" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="552" y="490" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="630" y="490" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="708" y="490" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="240" y="560" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="318" y="560" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="396" y="560" width="62" height="54" rx="10" fill="#1d7447"/><rect x="474" y="560" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="552" y="560" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="630" y="560" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="708" y="560" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="240" y="630" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="318" y="630" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="396" y="630" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="474" y="630" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="552" y="630" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="630" y="630" width="62" height="54" rx="10" fill="#f1f3f6"/><rect x="708" y="630" width="62" height="54" rx="10" fill="#f1f3f6"/>
+  <g transform="translate(920 260)">
+    <rect width="480" height="170" rx="26" fill="#ffffff" stroke="#d3dad5" stroke-width="4"/>
+    <rect x="30" y="30" width="170" height="54" rx="27" fill="#e2f1e7"/>
+    <circle cx="62" cy="57" r="10" fill="#1d7447"/>
+    <text x="84" y="68" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="30" font-weight="800" fill="#1d7447">Récent</text>
+    <text x="30" y="140" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="34" font-weight="600" fill="#566074">relevé il y a 2 jours</text>
+  </g>
+  <g transform="translate(920 480)">
+    <rect width="480" height="170" rx="26" fill="#ffffff" stroke="#d3dad5" stroke-width="4"/>
+    <rect x="30" y="30" width="170" height="54" rx="27" fill="#fbecdf"/>
+    <circle cx="62" cy="57" r="10" fill="#a95408"/>
+    <text x="84" y="68" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="30" font-weight="800" fill="#a95408">Ancien</text>
+    <text x="30" y="140" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="34" font-weight="600" fill="#566074">relevé il y a 9 jours</text>
+  </g>
+</svg>

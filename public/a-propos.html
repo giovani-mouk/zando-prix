@@ -1,0 +1,170 @@
+<!doctype html>
+<!-- =============================================================
+     public/a-propos.html : présentation du site (textes provisoires, @a-valider)
+     ============================================================= -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <!-- Sans cette ligne, un téléphone afficherait la page comme un écran
+       d'ordinateur rétréci, avec un texte minuscule. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>À propos : Zando Prix</title>
+  <meta name="description" content="Zando Prix compare les prix des produits de base entre les marchés : d'où viennent les prix et comment les lire.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z' fill='%231d7447'/%3E%3Ccircle cx='8' cy='8' r='1.8' fill='%23fff'/%3E%3C/svg%3E">
+  <!-- preconnect : ouvre la connexion aux serveurs de polices dès le début,
+       pour gagner du temps quand la feuille de style les demandera. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <!-- Icônes Font Awesome (cdnjs), décoratives : le texte suffit sans elles.
+       media="print" puis "all" au chargement : la feuille est téléchargée SANS
+       bloquer l'affichage de la page (sinon, sur une connexion lente, la page
+       resterait blanche en attendant le CDN).
+       integrity (SRI) : empreinte du fichier attendu, écrite par « npm run cdn:integrite ».
+       Le navigateur refuse alors un fichier qui aurait été modifié sur le CDN. -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha384-nRgPTkuX86pH8yjPJUAFuASXQSSl2/bBUiNV47vSYpKFxHJhbcrGnmlYpYJMeD7a" crossorigin="anonymous" referrerpolicy="no-referrer"
+        media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="module" src="/js/menu.js"></script>
+  <!-- type="module" : permet import/export, et le script ne s'exécute qu'une
+       fois le HTML entièrement lu (comme l'attribut defer). -->
+  <script type="module" src="/js/a-propos.js"></script>
+</head>
+<body>
+  <header class="entete page">
+    <div class="entete__barre">
+      <a class="marque" href="/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z" fill="currentColor"/><circle cx="8" cy="8" r="1.8" fill="#fff"/></svg>
+        Zando Prix
+      </a>
+      <nav class="navigation" id="navigation" aria-label="Navigation principale">
+        <ul>
+          <li><a href="/">Les prix</a></li>
+          <li><a href="/a-propos.html" aria-current="page">À propos</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <!-- Sur les très petits écrans, le bouton de l'en-tête est masqué : il est ici -->
+          <li class="navigation__proposer"><a href="/?proposer=1">Proposer un prix</a></li>
+        </ul>
+      </nav>
+      <div class="entete__actions">
+        <a class="bouton bouton--principal" href="/?proposer=1"><i class="fa-solid fa-plus" aria-hidden="true"></i> Proposer<span class="texte-large"> un prix</span></a>
+        <!-- Menu burger (téléphone) : affiché par /js/menu.js. Sans JavaScript,
+             il reste caché et les liens restent visibles sous le logo. -->
+        <button type="button" class="burger" aria-expanded="false" aria-controls="navigation" hidden>
+          <span class="burger__lignes" aria-hidden="true"></span>
+          <span class="sr-only">Menu</span>
+        </button>
+      </div>
+    </div>
+
+
+    <h1 class="titre titre--page">À propos de Zando Prix</h1>
+    <p class="chapeau">Un comparateur de prix des produits de base entre les marchés, pour savoir où acheter moins cher.</p>
+  </header>
+
+  <main class="page">
+    <!-- Textes provisoires (@a-valider) : à relire et compléter avec le PM.
+         Ils ne décrivent que le fonctionnement réel du site. -->
+    <div class="page-texte">
+      <section class="bloc-texte" aria-labelledby="mission">
+        <h2 id="mission">Pourquoi Zando Prix&nbsp;?</h2>
+        <p>
+          <em>Zando</em> veut dire « marché » en lingala. D'un marché à l'autre, le prix d'un kilo de riz,
+          d'un tas de manioc ou d'un litre d'huile peut beaucoup varier. Zando Prix rassemble ces prix
+          sur une seule page, pour savoir où acheter moins cher avant de se déplacer.
+        </p>
+      </section>
+
+      <section class="bloc-texte" aria-labelledby="provenance">
+        <h2 id="provenance">D'où viennent les prix&nbsp;?</h2>
+        <p>
+          Chaque prix est un relevé fait dans un marché, à une date précise. Les utilisateurs peuvent
+          aussi proposer un prix qu'ils ont vu : il est vérifié par l'équipe avant d'être publié,
+          et il est signalé comme « proposé par un utilisateur ».
+        </p>
+      </section>
+
+      <section class="bloc-texte" aria-labelledby="lecture">
+        <h2 id="lecture">Comment lire les prix</h2>
+        <dl class="definitions">
+          <div>
+            <dt><span class="etiquette-meilleur">Meilleur prix</span></dt>
+            <dd>Le marché où le produit est le moins cher. En cas d'égalité, tous les marchés concernés sont signalés.</dd>
+          </div>
+          <div>
+            <dt><span class="fraicheur fraicheur--recent">Récent</span></dt>
+            <dd>Le prix a été relevé il y a moins de 7 jours.</dd>
+          </div>
+          <div>
+            <dt><span class="fraicheur fraicheur--ancien">Ancien</span></dt>
+            <dd>Le prix a été relevé il y a 7 jours ou plus : il a peut-être changé depuis.</dd>
+          </div>
+          <div>
+            <dt>Prix non disponible</dt>
+            <dd>Aucun prix n'a encore été relevé pour ce produit dans ce marché. Nous n'inventons jamais un prix.</dd>
+          </div>
+          <div>
+            <dt>Non comparé</dt>
+            <dd>Le produit y est vendu dans une autre unité (au tas plutôt qu'au kilo, par exemple) : son prix est affiché mais pas comparé aux autres.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Liste remplie par /js/a-propos.js depuis l'API : toujours à jour -->
+      <section class="bloc-texte" aria-labelledby="marches" id="bloc-marches" hidden>
+        <h2 id="marches">Les marchés suivis</h2>
+        <ul class="liste-marches" id="liste-marches"></ul>
+      </section>
+
+      <section class="bloc-texte bloc-texte--appel" aria-labelledby="participer">
+        <h2 id="participer">Participer</h2>
+        <p>
+          Vous avez vu un prix au marché&nbsp;? Partagez-le avec « Proposer un prix ».
+          Une question, une erreur, un marché à ajouter&nbsp;? Écrivez-nous.
+        </p>
+        <div class="actions-texte">
+          <a class="bouton bouton--principal" href="/?proposer=1">Proposer un prix</a>
+          <a class="bouton bouton--secondaire" href="/contact.html">Nous contacter</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="pied__contenu page">
+      <div class="pied__marque">
+        <a class="marque marque--pied" href="/">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z" fill="currentColor"/><circle cx="8" cy="8" r="1.8" fill="#fff"/></svg>
+          Zando Prix
+        </a>
+        <p>Zando Prix compare les prix des produits de base entre plusieurs marchés, pour savoir où acheter moins cher.</p>
+      </div>
+
+      <nav class="pied__colonne" aria-label="Liens du site">
+        <h2 class="pied__titre">Le site</h2>
+        <ul>
+          <li><a href="/">Consulter les prix</a></li>
+          <li><a href="/?proposer=1">Proposer un prix</a></li>
+          <li><a href="/a-propos.html">À propos</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/admin.html">Espace administrateur</a></li>
+        </ul>
+      </nav>
+
+      <div class="pied__colonne">
+        <h2 class="pied__titre">À propos des prix</h2>
+        <ul>
+          <li>Les montants sont en francs CFA (FCFA).</li>
+          <li>Chaque prix est daté du jour où il a été relevé.</li>
+          <li>« Récent » : relevé il y a moins de 7 jours. « Ancien » : 7 jours ou plus.</li>
+          <li>Un prix proposé par un utilisateur n'est publié qu'après vérification.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pied__bas page">
+      <p>© 2026 Zando Prix</p>
+    </div>
+  </footer>
+</body>
+</html>

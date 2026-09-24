@@ -1,0 +1,1486 @@
+/* =============================================================
+   Zando Prix : feuille de style
+   Direction : les ardoises de prix des marchés. Chiffres condensés
+   et alignés, un seul accent fort : l'étiquette du meilleur prix.
+
+   Comment lire ce fichier
+   - Variables (:root) : couleurs, polices, largeur. Changer une couleur
+     ici la change partout : var(--vert) est utilisé dans tout le fichier.
+   - Unités : rem = taille de police de base du navigateur (souvent 16 px).
+     Si l'utilisateur agrandit le texte dans ses réglages, toute la mise en
+     page suit. On évite les px pour les tailles de texte et les largeurs.
+   - clamp(min, idéal, max) : une taille fluide qui suit la largeur de
+     l'écran (vw = 1 % de la largeur) sans dépasser les bornes.
+   - Noms de classes « bloc__element--variante » (convention BEM) :
+     .releve (bloc), .releve__prix (partie du bloc), .releve--meilleur
+     (variante). On sait d'un coup d'œil à quel composant appartient une règle.
+   - Mobile d'abord : les règles de base visent le téléphone ; les
+     @media (min-width: …) ajoutent la mise en page des grands écrans.
+   - Ordre des sections : base, en-tête, carrousel, boutons, champs,
+     filtres, planches de prix, dialogues, espace administrateur, pied.
+   ============================================================= */
+
+:root {
+  color-scheme: light;
+
+  --fond: #edf1ee;          /* mur chaulé */
+  --surface: #ffffff;
+  --encre: #1b2238;         /* encre indigo */
+  --encre-douce: #566074;
+  --trait: #d3dad5;
+  --trait-fort: #8a93a6;    /* bordures de champs : contraste 3:1 */
+  --bleu: #2350a0;          /* parasol de marché : actions */
+  --bleu-fonce: #1a3d7c;
+  --vert: #1d7447;          /* feuille de manioc : meilleur prix, récent */
+  --vert-pale: #e2f1e7;
+  --orange: #a95408;        /* prix ancien (RM03) */
+  --orange-pale: #fbecdf;
+  --rouge: #a3261c;
+  --rouge-pale: #f8e3e0;
+
+  --police: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --police-etroite: "Archivo", "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
+
+  --rayon: 6px;
+  /* 120rem = 1 920 px : sur les écrans courants, le contenu occupe toute la
+     largeur (seule la marge intérieure de .page reste). Au-delà, sur les très
+     grands écrans, il est centré pour que les lignes ne deviennent pas illisibles. */
+  --largeur: 120rem;
+}
+
+/* ---------- Base ---------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--encre);
+  font-family: var(--police);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+h1, h2, p { margin: 0; }
+
+button, input, select { font: inherit; color: inherit; }
+
+a { color: var(--bleu); text-underline-offset: 0.2em; }
+
+/* Contour bien visible autour de l'élément actif, UNIQUEMENT quand on
+   navigue au clavier (:focus-visible), pas au clic de souris. Ne jamais
+   supprimer ce contour sans le remplacer : sans lui, la navigation au
+   clavier devient impossible. */
+:focus-visible {
+  outline: 3px solid var(--bleu);
+  outline-offset: 2px;
+}
+
+/* L'attribut HTML hidden doit toujours gagner, même contre une règle
+   « display: grid » plus précise : le JavaScript s'en sert pour
+   montrer et cacher des éléments. */
+[hidden] { display: none !important; }
+
+/* « Screen reader only » : texte invisible à l'écran mais lu par les
+   lecteurs d'écran (display: none le cacherait aussi pour eux). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lien-evitement {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  background: var(--encre);
+  color: #fff;
+  border-radius: var(--rayon);
+}
+.lien-evitement:focus { top: 1rem; }
+
+.page {
+  max-width: var(--largeur);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 3vw, 2.5rem);
+}
+
+/* ---------- En-tête ---------- */
+
+.entete { padding-block: 1.25rem 2rem; }
+
+.entete__barre {
+  position: relative;   /* repère du menu déroulant sur téléphone */
+  display: grid;
+  /* 1fr auto 1fr : les deux colonnes extérieures sont égales, donc la
+     navigation est exactement au centre de la page */
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-areas: "marque navigation action";
+  align-items: center;
+  gap: 0.25rem 2rem;
+  margin-bottom: clamp(1.75rem, 6vw, 3.5rem);
+}
+.entete__barre > .marque { grid-area: marque; justify-self: start; }
+.entete__barre > .navigation { grid-area: navigation; }
+.entete__barre > .entete__actions { grid-area: action; justify-self: end; }
+.navigation ul { justify-content: center; }
+
+.entete__actions { display: flex; align-items: center; gap: 0.5rem; }
+
+/* Texte « un prix » du bouton : lu par les lecteurs d'écran même quand il
+   est masqué sur téléphone (technique .sr-only), pour laisser la place au logo */
+@media (max-width: 30rem) {
+  .texte-large {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* Sans JavaScript (pas d'attribut data-menu) : liens sous le logo */
+@media (max-width: 48rem) {
+  .entete__barre {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1rem;
+    grid-template-areas:
+      "marque     action"
+      "navigation navigation";
+  }
+  .entete__barre:not([data-menu]) .navigation ul { justify-content: flex-start; }
+}
+
+/* ---------- Menu burger (téléphone et petite tablette) ---------- */
+
+.burger {
+  display: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1.5px solid var(--trait-fort);
+  border-radius: var(--rayon);
+  background: var(--surface);
+  cursor: pointer;
+}
+/* Trois traits dessinés en CSS (pas d'icône externe : le bouton doit
+   marcher même si le CDN d'icônes ne répond pas) */
+.burger__lignes,
+.burger__lignes::before,
+.burger__lignes::after {
+  display: block;
+  width: 1.25rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--encre);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.burger__lignes { position: relative; }
+.burger__lignes::before,
+.burger__lignes::after { content: ""; position: absolute; left: 0; }
+.burger__lignes::before { top: -6px; }
+.burger__lignes::after { top: 6px; }
+/* Menu ouvert : les traits forment une croix */
+.burger[aria-expanded="true"] .burger__lignes { background: transparent; }
+.burger[aria-expanded="true"] .burger__lignes::before { transform: translateY(6px) rotate(45deg); }
+.burger[aria-expanded="true"] .burger__lignes::after { transform: translateY(-6px) rotate(-45deg); }
+
+@media (max-width: 48rem) {
+  .entete__barre[data-menu] .burger { display: grid; }
+  .entete__barre[data-menu="ferme"] > .navigation { display: none; }
+  /* Menu ouvert : panneau sous la barre, par-dessus la page */
+  .entete__barre[data-menu="ouvert"] > .navigation {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    left: 0;
+    z-index: 20;
+    padding: 0.5rem;
+    border: 1px solid var(--trait);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: 0 16px 40px rgb(27 34 56 / 0.18);
+  }
+  .entete__barre[data-menu="ouvert"] .navigation ul { display: grid; gap: 0; }
+  .entete__barre[data-menu="ouvert"] .navigation a {
+    display: block;
+    padding: 0.875rem 1rem;
+    border-bottom: 0;
+    border-radius: 8px;
+  }
+  .entete__barre[data-menu="ouvert"] .navigation a:hover { background: var(--fond); }
+  .entete__barre[data-menu="ouvert"] .navigation a[aria-current="page"] {
+    background: var(--vert-pale);
+    color: var(--vert);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .burger__lignes, .burger__lignes::before, .burger__lignes::after { transition: none; }
+}
+
+.navigation ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.navigation a {
+  display: inline-block;
+  padding: 0.625rem 0 0.375rem;
+  border-bottom: 3px solid transparent;
+  color: var(--encre);
+  font-weight: 600;
+  text-decoration: none;
+}
+.navigation a:hover { border-bottom-color: var(--trait-fort); }
+.navigation a[aria-current="page"] { border-bottom-color: var(--vert); }
+
+.marque {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--encre);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.marque svg { width: 1.6rem; height: 1.6rem; color: var(--vert); }
+
+.entete__barre .bouton { flex-shrink: 0; white-space: nowrap; }
+
+@media (max-width: 30rem) {
+  .entete__barre .bouton { padding-inline: 0.875rem; }
+}
+/* Lien « Proposer un prix » du menu : seulement sur les très petits écrans */
+.navigation__proposer { display: none; }
+/* Petits téléphones (jusqu’à 400 px) : le bouton de l’en-tête passe dans le menu
+   burger, pour que le logo garde sa place */
+@media (max-width: 25rem) {
+  .entete__barre[data-menu] .entete__actions > .bouton { display: none; }
+  .entete__barre[data-menu] .navigation__proposer { display: list-item; }
+}
+
+.titre {
+  font-family: var(--police-etroite);
+  font-stretch: 68%;
+  font-weight: 800;
+  font-size: clamp(2.25rem, 7vw + 0.5rem, 5.25rem);
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+  max-width: 13ch;
+  text-wrap: balance;
+}
+.titre--page {
+  font-size: clamp(2.25rem, 5vw + 0.5rem, 3.5rem);
+  max-width: none;
+}
+
+.chapeau {
+  margin-top: 1rem;
+  max-width: 36rem;
+  font-size: 1.125rem;
+  color: var(--encre-douce);
+}
+
+.legende {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+  color: var(--encre-douce);
+}
+.legende li { display: flex; align-items: center; gap: 0.5rem; }
+
+/* Mobile : en-tête plus compact, pour que les prix arrivent vite à l'écran */
+@media (max-width: 40rem) {
+  .entete { padding-block: 1rem 1.25rem; }
+  .entete__barre { margin-bottom: 1.25rem; }
+  .chapeau { margin-top: 0.75rem; font-size: 1rem; }
+  /* La règle des 7 jours est aussi dans le pied de page */
+  .legende { display: none; }
+}
+
+.avertissement {
+  max-width: 40rem;
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--orange);
+  background: var(--orange-pale);
+}
+
+/* ---------- Carrousel de l'accueil (hors cadrage, @a-valider) ---------- */
+
+/* Grand écran uniquement : sur mobile, les prix passent d'abord */
+@media (min-width: 60rem) {
+  .entete__contenu--avec-carrousel {
+    display: grid;
+    /* Le carrousel prend la plus grande part de la largeur */
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(2rem, 4vw, 4.5rem);
+    align-items: center;
+  }
+}
+@media (max-width: 59.99rem) {
+  .carrousel { display: none !important; }
+}
+
+.carrousel { display: grid; gap: 0.5rem; }
+
+.carrousel__diapos {
+  position: relative;
+  /* Format 16/10 : plus large que haut, pour que le carrousel agrandi
+     ne repousse pas les prix trop bas dans la page */
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--encre);
+}
+
+.diapo {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.diapo--active { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .diapo { transition: none; }
+}
+
+.diapo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.diapo figcaption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 2.5rem 1.25rem 1rem;
+  background: linear-gradient(to top, rgb(27 34 56 / 0.85), transparent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Photo pas encore fournie : fond sobre, la légende reste lisible */
+.diapo--sans-photo { background: linear-gradient(140deg, #34456e, var(--encre) 70%); }
+.diapo--sans-photo img { display: none; }
+
+.carrousel__commandes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.carrousel__points { display: flex; gap: 0.25rem; }
+
+/* Zone cliquable de 24px, point visible de 10px */
+.carrousel__point {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.carrousel__point::before {
+  content: "";
+  position: absolute;
+  inset: 0.45rem;
+  border-radius: 50%;
+  background: var(--trait-fort);
+}
+.carrousel__point[aria-current="true"]::before { inset: 0.35rem; background: var(--encre); }
+
+/* ---------- Boutons ---------- */
+
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Espace entre l'icône et le texte (dans un conteneur flex, les espaces
+     en début de texte disparaissent : gap les remplace) */
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.125rem;
+  border: 1.5px solid transparent;
+  border-radius: var(--rayon);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+}
+.bouton[disabled] { opacity: 0.6; cursor: progress; }
+
+.bouton--principal { background: var(--bleu); color: #fff; }
+.bouton--principal:hover:not([disabled]) { background: var(--bleu-fonce); }
+
+.bouton--secondaire { background: var(--surface); border-color: var(--encre); color: var(--encre); }
+.bouton--secondaire:hover:not([disabled]) { background: var(--fond); }
+
+.bouton--discret {
+  padding-inline: 0.5rem;
+  background: none;
+  color: var(--bleu);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.bouton--valider { background: var(--vert); color: #fff; }
+.bouton--valider:hover:not([disabled]) { background: #165c38; }
+
+.bouton--rejeter { background: var(--surface); border-color: var(--rouge); color: var(--rouge); }
+.bouton--rejeter:hover:not([disabled]) { background: var(--rouge-pale); }
+
+.bouton--compact { min-height: 2.5rem; padding: 0.375rem 0.875rem; }
+
+.lien-action {
+  padding: 0.625rem 0;
+  border: 0;
+  background: none;
+  color: var(--bleu);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+/* ---------- Champs ---------- */
+
+.champ { display: grid; gap: 0.375rem; align-content: start; }
+
+.champ label { font-weight: 600; font-size: 0.9375rem; }
+
+.facultatif { font-weight: 400; color: var(--encre-douce); }
+
+.champ input,
+.champ select,
+.champ textarea {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--trait-fort);
+  border-radius: var(--rayon);
+  background-color: var(--surface);
+}
+
+.champ select {
+  appearance: none;
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231b2238' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.75rem;
+}
+
+.champ [aria-invalid="true"] { border-color: var(--rouge); }
+
+.erreur { color: var(--rouge); font-size: 0.9375rem; }
+
+.alerte {
+  padding: 0.75rem 1rem;
+  border-radius: var(--rayon);
+  background: var(--rouge-pale);
+  color: var(--rouge);
+}
+
+/* ---------- Filtres ---------- */
+
+.filtres {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  align-items: end;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+}
+
+/* Petits écrans : la recherche et "Effacer" prennent toute la largeur,
+   Produit et Marché se partagent la ligne suivante */
+.filtres > .champ:first-child,
+.filtres > #effacer-filtres { grid-column: 1 / -1; }
+.filtres > #effacer-filtres { justify-self: start; }
+
+@media (min-width: 48rem) {
+  .filtres {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+  .filtres > .champ:first-child,
+  .filtres > #effacer-filtres { grid-column: auto; }
+}
+
+/* Catégories : boutons radio présentés comme des puces */
+.categories {
+  grid-column: 1 / -1;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.categories legend { margin-bottom: 0.375rem; padding: 0; font-weight: 600; font-size: 0.9375rem; }
+
+.puces { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* Sur mobile, les catégories défilent sur une seule ligne :
+   la place gagnée permet de voir un premier prix sans faire défiler la page. */
+@media (max-width: 40rem) {
+  .puces {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -1rem;
+    padding: 0.375rem 1rem;
+    scrollbar-width: none;
+  }
+  .puces::-webkit-scrollbar { display: none; }
+  .puce span { white-space: nowrap; }
+}
+
+.puce { position: relative; flex-shrink: 0; }
+.puce input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.puce span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0.375rem 1rem;
+  border: 1.5px solid var(--trait-fort);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600;
+}
+.puce input:hover + span { border-color: var(--encre); }
+.puce input:checked + span { background: var(--encre); border-color: var(--encre); color: #fff; }
+.puce input:focus-visible + span { outline: 3px solid var(--bleu); outline-offset: 2px; }
+
+.resume {
+  min-height: 1.5em;
+  margin: clamp(0.75rem, 3vw, 1.5rem) 0 clamp(0.5rem, 2vw, 1rem);
+  font-size: 0.9375rem;
+  color: var(--encre-douce);
+}
+
+/* ---------- Planches de prix ---------- */
+
+.resultats {
+  display: grid;
+  /* 20rem minimum : 4 colonnes sur grand écran, 3 sur ordinateur portable, 2 sur tablette, 1 sur mobile */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: 1.25rem;
+  align-items: start;
+  padding-bottom: 3rem;
+}
+.resultats:focus { outline: none; }
+
+.chargement { grid-column: 1 / -1; color: var(--encre-douce); }
+
+.planche {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;             /* le contenu suit les coins arrondis */
+  background: var(--surface);
+  border: 1px solid var(--trait);
+  border-top: 4px solid var(--encre);
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgb(27 34 56 / 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+/* Survol (souris) ou focus à l'intérieur (clavier) : la carte se soulève */
+.planche:hover,
+.planche:focus-within {
+  border-color: var(--trait-fort);
+  border-top-color: var(--vert);
+  box-shadow: 0 14px 32px rgb(27 34 56 / 0.12);
+  transform: translateY(-4px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .planche { transition: box-shadow 0.25s ease, border-color 0.25s ease; }
+  .planche:hover, .planche:focus-within { transform: none; }
+}
+
+.planche__entete {
+  display: grid;
+  /* photo | nom du produit | bouton graphique (colonne vide s'il n'y en a pas) */
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.planche__categorie { font-size: 0.8125rem; font-weight: 600; color: var(--encre-douce); }
+
+/* Photo du produit : carré net, recadré sans déformation */
+.vignette {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: var(--rayon);
+  object-fit: cover;
+  background: var(--fond);
+}
+
+/* Remplaçant tant qu'il n'y a pas de photo */
+.vignette--initiale {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--trait);
+  color: var(--encre-douce);
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.planche__titre {
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 1.875rem;
+  line-height: 1.05;
+}
+
+.planche__unite { font-size: 0.9375rem; color: var(--encre-douce); }
+
+.planche__vide {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--trait);
+  color: var(--encre-douce);
+}
+
+.planche__pied {
+  display: flex;
+  justify-content: center;      /* bouton centré */
+  margin-top: auto;
+  padding: 0.875rem 1.25rem 1rem;
+  border-top: 1px solid var(--trait);
+}
+.planche__proposer { border-radius: 999px; padding-inline: 1.25rem; }
+
+/* Bouton rond « graphique » en haut à droite de la planche */
+.planche__graphique-bouton {
+  flex-shrink: 0;
+  align-self: flex-start;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: auto;
+  border: 1.5px solid var(--trait);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--bleu);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.planche__graphique-bouton:hover { border-color: var(--bleu); }
+.planche__graphique-bouton--actif { background: #e4e9f4; border-color: var(--bleu); }
+
+.planche__graphique {
+  padding: 0.75rem 1.25rem 1rem;
+  border-top: 1px solid var(--trait);
+  background: #fafbfa;
+}
+.graphique { position: relative; width: 100%; }
+.graphique__legende {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+  color: var(--encre-douce);
+  font-size: 0.8125rem;
+}
+.graphique__pastille { width: 0.75rem; height: 0.75rem; border-radius: 3px; background: var(--vert); }
+.graphique__erreur { color: var(--encre-douce); font-size: 0.9375rem; }
+.planche__graphique-bouton[aria-busy="true"] { cursor: progress; opacity: 0.6; }
+
+.releves { margin: 0; padding: 0; list-style: none; }
+
+.releve {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "marche prix"
+    "infos  infos";
+  gap: 0.375rem 1rem;
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--trait);
+}
+
+.releve__marche { grid-area: marche; align-self: center; font-weight: 600; }
+
+.releve__prix { grid-area: prix; text-align: right; white-space: nowrap; }
+
+.releve__montant {
+  font-family: var(--police-etroite);
+  font-stretch: 72%;
+  font-weight: 750;
+  font-size: 2rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.releve__unite { margin-left: 0.25rem; font-size: 0.875rem; color: var(--encre-douce); }
+
+.releve__infos {
+  grid-area: infos;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem 0.625rem;
+  font-size: 0.875rem;
+  color: var(--encre-douce);
+}
+
+.releve--meilleur {
+  background: var(--vert-pale);
+  box-shadow: inset 4px 0 0 var(--vert);
+}
+.releve--meilleur .releve__montant { color: var(--vert); }
+.releve--meilleur .fraicheur--recent { background: var(--surface); }
+
+.releve--hors-comparaison .releve__montant { color: var(--encre-douce); }
+
+.releve--absent { grid-template-areas: "marche prix"; }
+.releve--absent .releve__marche { font-weight: 500; color: var(--encre-douce); }
+.releve__absent { grid-area: prix; align-self: center; font-style: italic; color: var(--encre-douce); }
+
+/* L'étiquette du meilleur prix : une étiquette de marché, avec son trou */
+.etiquette-meilleur {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding: 0.125rem 0.625rem 0.125rem 1.1rem;
+  background: var(--vert);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  clip-path: polygon(0.55rem 0, 100% 0, 100% 100%, 0.55rem 100%, 0 50%);
+}
+.etiquette-meilleur::before {
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  width: 0.3rem;
+  height: 0.3rem;
+  margin-top: -0.15rem;
+  border-radius: 50%;
+  background: var(--vert-pale);
+}
+
+.fraicheur {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+.fraicheur::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+.fraicheur--recent { color: var(--vert); background: var(--vert-pale); }
+.fraicheur--ancien { color: var(--orange); background: var(--orange-pale); }
+
+.note { color: var(--encre); }
+
+/* ---------- États vides et erreurs ---------- */
+
+.vide {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 2.5rem 1.5rem;
+  background: var(--surface);
+  border: 1.5px dashed var(--trait-fort);
+  border-radius: var(--rayon);
+  text-align: center;
+}
+.vide__message { max-width: 36rem; font-size: 1.125rem; }
+.vide--simple { margin-top: 1rem; }
+
+/* ---------- Dialogue de proposition ---------- */
+
+.dialogue {
+  width: min(100% - 2rem, 34rem);
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--encre);
+  box-shadow: 0 18px 48px rgb(27 34 56 / 0.25);
+}
+.dialogue::backdrop { background: rgb(27 34 56 / 0.55); }
+
+.dialogue__contenu { display: grid; gap: 1.25rem; padding: 1.5rem; }
+
+.dialogue__titre {
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+}
+.dialogue__titre:focus { outline: none; }
+
+.dialogue__aide { margin-top: 0.5rem; color: var(--encre-douce); }
+
+.dialogue__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.25rem;
+}
+
+.formulaire { display: grid; gap: 1rem; }
+
+.formulaire__ligne {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.recapitulatif {
+  padding: 1rem;
+  border-left: 4px solid var(--vert);
+  background: var(--vert-pale);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dialogue[open] { animation: ouverture 0.18s ease-out; }
+}
+@keyframes ouverture {
+  from { opacity: 0; transform: translateY(0.5rem); }
+}
+
+/* ---------- Espace administrateur : onglets et tableau ---------- */
+
+.onglets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+
+.onglet {
+  min-height: 2.5rem;
+  padding: 0.375rem 1rem;
+  border: 1.5px solid var(--trait-fort);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600;
+  cursor: pointer;
+}
+.onglet[aria-pressed="true"] { background: var(--encre); border-color: var(--encre); color: #fff; }
+
+.compteur { font-variant-numeric: tabular-nums; }
+
+.annonce { min-height: 1.5em; margin-bottom: 1rem; font-weight: 600; }
+.annonce:focus { outline: none; }
+/* Vide : ne prend pas de place, mais reste dans la page pour que les
+   lecteurs d'écran annoncent le texte quand il apparaîtra */
+.annonce:empty { min-height: 0; margin: 0; }
+
+.tableau-conteneur {
+  /* position: relative retient aussi les éléments .sr-only du tableau,
+     sinon ils échappent au défilement et élargissent la page */
+  position: relative;
+  overflow-x: auto;
+  margin-bottom: 3rem;
+  background: var(--surface);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+}
+
+.tableau { width: 100%; min-width: 54rem; border-collapse: collapse; font-size: 0.9375rem; }
+
+.tableau th,
+.tableau td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--trait);
+  text-align: left;
+  vertical-align: middle;
+}
+.tableau thead th { background: var(--fond); font-weight: 700; white-space: nowrap; }
+.tableau tbody th { font-weight: 600; }
+.tableau tbody tr:last-child > * { border-bottom: 0; }
+.tableau .nombre { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.tableau .date { white-space: nowrap; }
+
+.actions { display: flex; gap: 0.5rem; white-space: nowrap; }
+.traitee { color: var(--encre-douce); white-space: nowrap; }
+
+.statut {
+  display: inline-block;
+  padding: 0.125rem 0.625rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+.statut--en_attente { color: var(--orange); background: var(--orange-pale); }
+.statut--validee { color: var(--vert); background: var(--vert-pale); }
+.statut--rejetee { color: var(--rouge); background: var(--rouge-pale); }
+
+/* ---------- Espace administrateur ---------- */
+
+/* « Corrigé par … » sous le prix, dans le tableau */
+.mention {
+  display: block;
+  margin-top: 0.125rem;
+  color: var(--encre-douce);
+  font-size: 0.8125rem;
+  font-variant-numeric: normal;
+}
+
+.dialogue--etroit { width: min(100% - 2rem, 28rem); }
+
+/* Page de connexion */
+.corps-connexion { min-height: 100dvh; display: grid; }
+
+.connexion {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 1.5rem;
+  width: min(100% - 2rem, 26rem);
+  margin: auto;
+  padding-block: 2rem;
+}
+
+.connexion__carte {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border: 1px solid var(--trait);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(27 34 56 / 0.08);
+}
+.connexion__carte .dialogue__aide { margin-top: -0.75rem; }
+.connexion__carte .bouton { width: 100%; }
+
+.connexion__titre {
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.connexion__retour a { color: var(--bleu); font-weight: 600; }
+
+/* ---------- Pied de page ---------- */
+
+.pied {
+  margin-top: 1rem;
+  background: var(--encre);
+  color: #c6ccd8;
+  font-size: 0.9375rem;
+}
+.pied a { color: #fff; text-underline-offset: 0.2em; }
+.pied :focus-visible { outline-color: #fff; }
+
+.pied__contenu {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding-block: 2.5rem 2rem;
+}
+@media (min-width: 48rem) {
+  .pied__contenu {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.3fr);
+  }
+}
+
+.marque--pied { color: #fff; }
+.marque--pied svg { color: #6fcf97; }
+.pied__marque p { max-width: 28rem; margin-top: 0.75rem; }
+
+.pied__titre {
+  margin-bottom: 0.75rem;
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+.pied__colonne ul { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+
+.pied__bas p {
+  padding-block: 1rem 1.5rem;
+  border-top: 1px solid rgb(255 255 255 / 0.15);
+  font-size: 0.875rem;
+}
+
+/* ---------- Textes d'aide des champs ---------- */
+
+.aide { color: var(--encre-douce); font-size: 0.875rem; }
+.champ textarea { min-height: 9rem; resize: vertical; line-height: 1.5; }
+.formulaire__ligne--egale { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+
+/* Champ piège anti-robots : hors de l'écran (display: none serait
+   repéré par les robots les plus malins, qui ignorent alors le champ) */
+.piege { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Encadré blanc générique (formulaire de contact, tableau de l'admin) */
+.carte {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--trait);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+/* ---------- Pages À propos et Contact ---------- */
+
+/* Toute la largeur, en deux colonnes sur grand écran : chaque bloc garde
+   une longueur de ligne confortable (moins de 80 caractères) */
+.page-texte { display: grid; gap: 1.25rem; align-items: start; padding-bottom: 3rem; }
+@media (min-width: 60rem) {
+  .page-texte { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page-texte .bloc-texte--appel { grid-column: 1 / -1; }
+}
+
+.bloc-texte {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--trait);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.bloc-texte h2 {
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 1.625rem;
+  line-height: 1.1;
+}
+.bloc-texte--appel { border-left: 4px solid var(--vert); }
+
+.definitions { display: grid; gap: 0.875rem; margin: 0; }
+.definitions > div {
+  display: grid;
+  grid-template-columns: 10.5rem 1fr;
+  gap: 0.25rem 1rem;
+  align-items: baseline;
+}
+.definitions dt { font-weight: 700; }
+.definitions dd { margin: 0; color: var(--encre-douce); }
+@media (max-width: 30rem) {
+  .definitions > div { grid-template-columns: 1fr; }
+}
+
+.liste-marches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.liste-marches li {
+  display: grid;
+  padding: 0.75rem 1rem;
+  border-radius: var(--rayon);
+  background: var(--fond);
+}
+.liste-marches span { color: var(--encre-douce); font-size: 0.875rem; }
+
+.liste-simple { margin: 0; padding-left: 1.25rem; color: var(--encre-douce); }
+.liste-simple li + li { margin-top: 0.25rem; }
+
+.actions-texte { display: flex; flex-wrap: wrap; gap: 0.75rem; padding-top: 0.25rem; }
+
+/* Contact : formulaire à gauche, informations à droite sur grand écran */
+.contact {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+  padding-bottom: 3rem;
+}
+@media (min-width: 60rem) {
+  .contact { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+}
+.contact__formulaire > div { display: grid; gap: 1.25rem; }
+.contact__aparte { display: grid; gap: 1.25rem; }
+.contact__aparte .bouton { justify-self: start; }
+.contact__titre {
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+.contact__titre:focus { outline: none; }
+#vue-merci .bouton { justify-self: start; }
+
+/* =============================================================
+   Tableau de bord de l'espace administrateur
+   Grand écran : barre latérale fixe à gauche + contenu à droite.
+   Mobile et tablette : la barre passe au-dessus du contenu.
+   ============================================================= */
+
+.corps-admin { background: var(--fond); }
+
+.tableau-de-bord { min-height: 100dvh; }
+@media (min-width: 60rem) {
+  .tableau-de-bord {
+    display: grid;
+    grid-template-columns: 17rem minmax(0, 1fr);
+  }
+}
+
+/* ---------- Barre latérale ---------- */
+
+.barre-laterale {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 1.25rem;
+  background: var(--encre);
+  color: #c6ccd8;
+}
+@media (min-width: 60rem) {
+  .barre-laterale {
+    /* Reste visible quand on fait défiler un long tableau */
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+}
+
+.marque--claire { color: #fff; }
+.marque--claire svg { color: #6fd39b; }
+
+.barre-laterale__espace {
+  margin-top: -1rem;
+  color: #9aa3b5;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* État de connexion : pastille verte + « Connecté » + nom */
+.etat-connexion {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.875rem 1rem;
+  border: 1px solid rgb(111 211 155 / 0.35);
+  border-radius: 8px;
+  background: rgb(111 211 155 / 0.1);
+}
+.etat-connexion__pastille {
+  flex-shrink: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-top: 0.3rem;
+  border-radius: 50%;
+  background: #3ecf7a;
+  box-shadow: 0 0 0 3px rgb(62 207 122 / 0.3);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .etat-connexion__pastille { animation: pulsation 2.4s ease-in-out infinite; }
+}
+@keyframes pulsation {
+  50% { box-shadow: 0 0 0 6px rgb(62 207 122 / 0.12); }
+}
+.etat-connexion__texte { display: grid; min-width: 0; }
+.etat-connexion__libelle { color: #6fd39b; font-size: 0.8125rem; font-weight: 700; }
+.etat-connexion__nom { color: #fff; font-weight: 700; }
+.etat-connexion__email {
+  overflow: hidden;
+  color: #9aa3b5;
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Menu des sections */
+.menu ul { display: grid; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.menu__lien {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--rayon);
+  color: #c6ccd8;
+  font-weight: 600;
+  text-decoration: none;
+}
+.menu__lien svg { flex-shrink: 0; width: 1.25rem; height: 1.25rem; }
+.menu__lien:hover { background: rgb(255 255 255 / 0.06); color: #fff; }
+.menu__lien[aria-current="page"] {
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 3px 0 0 #6fd39b;
+  color: #fff;
+}
+.menu__compteur {
+  margin-left: auto;
+  min-width: 1.5rem;
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  background: #6fd39b;
+  color: var(--encre);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.barre-laterale__bas {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+.barre-laterale__lien { color: #c6ccd8; font-weight: 600; }
+.barre-laterale__lien:hover { color: #fff; }
+.barre-laterale :focus-visible { outline-color: #6fd39b; }
+
+.bouton--sombre { border-color: rgb(255 255 255 / 0.3); background: transparent; color: #fff; }
+.bouton--sombre:hover:not([disabled]) { background: rgb(255 255 255 / 0.08); }
+
+/* Tablette et mobile : barre compacte en haut, menu horizontal */
+@media (max-width: 59.99rem) {
+  .barre-laterale {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.875rem 1rem;
+    padding: 1rem;
+  }
+  .barre-laterale__espace { display: none; }
+  .etat-connexion { grid-column: 1 / -1; padding: 0.625rem 0.875rem; }
+  .menu { grid-column: 1 / -1; }
+  /* Les liens se partagent la ligne, et passent l'un sous l'autre si la place manque */
+  .menu ul { display: flex; flex-wrap: wrap; }
+  .menu li { flex: 1 1 10rem; }
+  .barre-laterale__bas {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .barre-laterale__lien { display: none; }
+}
+
+/* ---------- Contenu ---------- */
+
+.espace {
+  display: grid;
+  /* minmax(0, 1fr) : sans cela, le tableau large (54rem minimum) élargirait
+     toute la colonne au lieu de défiler dans son propre conteneur */
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+.espace:focus { outline: none; }
+.vue { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+
+.espace__titre {
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: clamp(2rem, 3vw + 1rem, 2.75rem);
+  line-height: 1;
+}
+.espace__aide { max-width: 48rem; margin-top: 0.5rem; color: var(--encre-douce); }
+
+/* Cartes de chiffres clés */
+.indicateurs {
+  display: grid;
+  /* 2 colonnes sur téléphone, 4 sur ordinateur */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  gap: clamp(0.625rem, 2vw, 1rem);
+}
+.indicateur {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--trait);
+  border-top: 4px solid var(--trait-fort);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--encre);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.indicateur:hover { box-shadow: 0 4px 14px rgb(27 34 56 / 0.08); }
+.indicateur__nombre {
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 2.25rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.indicateur__libelle { color: var(--encre-douce); font-weight: 600; font-size: 0.9375rem; }
+@media (max-width: 40rem) {
+  .indicateur { padding: 0.75rem 0.875rem; }
+  .indicateur__nombre { font-size: 1.75rem; }
+}
+.indicateur--attente { border-top-color: var(--orange); }
+.indicateur--publiee { border-top-color: var(--vert); }
+.indicateur--rejetee { border-top-color: var(--rouge); }
+.indicateur--messages { border-top-color: var(--bleu); }
+
+/* Dans le tableau de bord, le tableau est dans une carte : pas de double bordure */
+.carte .tableau-conteneur { margin-bottom: 0; }
+.carte .vide--simple { margin-top: 0; }
+
+/* ---------- Messages ---------- */
+
+.messages { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+
+.message {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--trait);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.message--non-lu { border-left: 4px solid var(--bleu); }
+
+.message__entete {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+}
+.message__expediteur { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.625rem; }
+.message__email { color: var(--encre-douce); font-size: 0.9375rem; overflow-wrap: anywhere; }
+.message__date { color: var(--encre-douce); font-size: 0.875rem; }
+.message__nouveau {
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  background: var(--bleu);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+/* pre-wrap : les retours à la ligne du message sont conservés */
+.message__contenu { max-width: 70ch; white-space: pre-wrap; overflow-wrap: anywhere; }
+.message__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.625rem; }
+
+/* =============================================================
+   Accueil : section héro explicite
+   ============================================================= */
+
+.surtitre {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  background: var(--vert-pale);
+  color: var(--vert);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* Trois étapes « Comment ça marche » */
+.etapes {
+  display: grid;
+  gap: 0.875rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.etape { display: flex; align-items: flex-start; gap: 0.875rem; }
+.etape__icone {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 12px;
+  background: #e4e9f4;
+  color: var(--bleu);
+}
+.etape__icone--vert { background: var(--vert-pale); color: var(--vert); }
+.etape__texte { display: grid; }
+.etape__detail { color: var(--encre-douce); font-size: 0.9375rem; }
+
+/* Téléphone : trois colonnes compactes, titres seuls, pour que les prix
+   restent proches du haut de l'écran */
+@media (max-width: 40rem) {
+  .surtitre { margin-bottom: 0.625rem; font-size: 0.8125rem; }
+  .etapes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; margin-top: 1rem; }
+  .etape { flex-direction: column; align-items: center; gap: 0.375rem; text-align: center; }
+  .etape strong { font-size: 0.8125rem; line-height: 1.25; }
+  .etape__detail { display: none; }
+}
+
+/* Chiffres clés */
+.chiffres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--encre-douce);
+  font-size: 0.9375rem;
+}
+.chiffres li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.chiffres i { color: var(--vert); }
+.chiffres strong { color: var(--encre); }
+@media (max-width: 40rem) {
+  .chiffres { margin-top: 0.875rem; font-size: 0.875rem; }
+}
+
+/* Titre au-dessus des filtres */
+.titre-section {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 1rem;
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
+  line-height: 1.1;
+}
+.titre-section i { color: var(--vert); font-size: 0.8em; }
+

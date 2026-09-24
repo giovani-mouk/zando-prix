@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="Le meilleur prix signalé en vert">
+  <title>Le meilleur prix signalé en vert</title>
+  <defs>
+    <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef3ee"/><stop offset="1" stop-color="#e3ece6"/></linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#ciel)"/>
+  <circle cx="1380" cy="170" r="90" fill="#f7d774" opacity=".55"/>
+  <rect y="800" width="1600" height="200" fill="#d9cdb8"/>
+  <rect y="800" width="1600" height="14" fill="#c7b89d"/>
+  <rect x="360" y="120" width="880" height="620" rx="30" fill="#8a6a44"/>
+  <rect x="384" y="144" width="832" height="572" rx="18" fill="#22332b"/>
+  <text x="460" y="224" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="54" font-weight="800" fill="#fff">Riz · le kilo</text>
+  <rect x="420" y="268" width="760" height="92" rx="14" fill="#2b6d4b"/><text x="460" y="330" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="40" font-weight="600" fill="#f4f1ea">Marché Total</text><text x="1140" y="330" text-anchor="end" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="48" font-weight="800" fill="#b9f3cf">750 <tspan font-size="28" font-weight="600">FCFA</tspan></text><path d="M440 374 h720" stroke="#f4f1ea" stroke-opacity=".15" stroke-width="3"/><rect x="420" y="378" width="760" height="92" rx="14" fill="none"/><text x="460" y="440" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="40" font-weight="600" fill="#f4f1ea">Poto-Poto</text><text x="1140" y="440" text-anchor="end" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="48" font-weight="800" fill="#f4f1ea">800 <tspan font-size="28" font-weight="600">FCFA</tspan></text><path d="M440 484 h720" stroke="#f4f1ea" stroke-opacity=".15" stroke-width="3"/><rect x="420" y="488" width="760" height="92" rx="14" fill="none"/><text x="460" y="550" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="40" font-weight="600" fill="#f4f1ea">Moungali</text><text x="1140" y="550" text-anchor="end" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="48" font-weight="800" fill="#f4f1ea">950 <tspan font-size="28" font-weight="600">FCFA</tspan></text><path d="M440 594 h720" stroke="#f4f1ea" stroke-opacity=".15" stroke-width="3"/><rect x="420" y="598" width="760" height="92" rx="14" fill="none"/><text x="460" y="660" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="40" font-weight="600" fill="#f4f1ea">Ouenzé</text><text x="1140" y="660" text-anchor="end" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="48" font-weight="800" fill="#f4f1ea">1 050 <tspan font-size="28" font-weight="600">FCFA</tspan></text>
+  <g transform="translate(1290 250) rotate(8)">
+    <path d="M0 0 h230 v80 h-230 l-34 -40z" fill="#1d7447"/>
+    <circle cx="-8" cy="40" r="8" fill="#fff"/>
+    <text x="118" y="54" text-anchor="middle" font-family="Archivo, 'Segoe UI', Roboto, Arial, sans-serif" font-size="34" font-weight="800" fill="#fff">Meilleur prix</text>
+  </g>
+  <rect x="520" y="740" width="30" height="70" fill="#6f5234"/><rect x="1050" y="740" width="30" height="70" fill="#6f5234"/>
+</svg>

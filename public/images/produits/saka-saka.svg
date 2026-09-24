@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Saka-saka">
+  <title>Saka-saka</title>
+  <rect width="240" height="240" rx="36" fill="#e2f0dc"/>
+  <ellipse cx="120" cy="196" rx="78" ry="12" fill="#000" opacity=".07"/>
+  <path d="M120 196 v-60" stroke="#3d6b2a" stroke-width="6" stroke-linecap="round"/>
+  <path d="M120 140 q-60 -40 -78 -50 q30 40 78 80z" fill="#3f8a32"/>
+  <path d="M120 140 q-30 -50 -39 -65 q15 40 39 80z" fill="#4f9a3c"/>
+  <path d="M120 140 q0 -60 0 -80 q0 40 0 80z" fill="#5fae48"/>
+  <path d="M120 140 q30 -50 39 -65 q-15 40 -39 80z" fill="#4f9a3c"/>
+  <path d="M120 140 q60 -40 78 -50 q-30 40 -78 80z" fill="#3f8a32"/>
+  <rect x="104" y="150" width="32" height="14" rx="5" fill="#c9a66b"/>
+</svg>
