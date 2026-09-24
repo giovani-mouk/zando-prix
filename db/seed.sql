@@ -33,7 +33,7 @@ INSERT INTO produits (nom, categorie, unite_reference, image) VALUES
 INSERT INTO produits (nom, categorie, unite_reference, image) VALUES
   ('Maïs',               'Céréales',         'kg',    '/images/produits/mais.svg'),
   ('Farine de blé',      'Céréales',         'kg',    '/images/produits/farine-de-ble.svg'),
-  ('Manioc',         'Féculents',        'piece', '/images/produits/chikwangue.svg'),
+  ('chikwangue',         'Féculents',        'piece', '/images/produits/chikwangue.svg'),
   ('Banane plantain',    'Féculents',        'tas',   '/images/produits/banane-plantain.svg'),
   ('Igname',             'Féculents',        'kg',    '/images/produits/igname.svg'),
   ('Patate douce',       'Féculents',        'kg',    '/images/produits/patate-douce.svg'),
