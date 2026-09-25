@@ -60,6 +60,12 @@
               <span class="menu__compteur" id="compteur-messages" hidden></span>
             </a>
           </li>
+          <li>
+            <a class="menu__lien" href="#administrateurs" data-vue="administrateurs">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.2.6 3.5 2.8 3.5 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+              <span>Administrateurs</span>
+            </a>
+          </li>
         </ul>
       </nav>
 
@@ -148,6 +154,94 @@
         <p class="annonce" id="annonce-messages" role="status" aria-live="polite" tabindex="-1"></p>
         <ul class="messages" id="liste-messages"></ul>
         <p class="vide vide--simple" id="aucun-message" hidden>Aucun message reçu pour l'instant.</p>
+      </section>
+
+      <!-- ===================== Vue Administrateurs (feature 16) ===================== -->
+      <section class="vue" id="vue-administrateurs" aria-labelledby="titre-administrateurs" hidden>
+        <header class="espace__entete">
+          <h1 class="espace__titre" id="titre-administrateurs">Administrateurs</h1>
+          <p class="espace__aide">
+            Les comptes de l'équipe. Tous les administrateurs ont les mêmes droits.
+            Un compte n'est jamais supprimé : désactivé, il ne peut plus se connecter,
+            mais ce qu'il a publié reste attribué à son nom.
+          </p>
+        </header>
+
+        <p class="annonce" id="annonce-comptes" role="status" aria-live="polite" tabindex="-1"></p>
+
+        <div class="carte">
+          <div class="tableau-conteneur">
+            <table class="tableau tableau--comptes">
+              <caption class="sr-only">Comptes administrateurs</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Nom</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Statut</th>
+                  <th scope="col">Dernière connexion</th>
+                  <th scope="col"><span class="sr-only">Action</span></th>
+                </tr>
+              </thead>
+              <tbody id="lignes-comptes"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="formulaires-comptes">
+          <!-- Ajouter un compte -->
+          <section class="carte" aria-labelledby="titre-nouveau-compte">
+            <h2 class="carte__titre" id="titre-nouveau-compte">Ajouter un administrateur</h2>
+            <form class="formulaire" id="formulaire-compte" novalidate>
+              <p class="alerte" id="compte-erreur" role="alert" hidden></p>
+              <div class="champ">
+                <label for="n-nom">Nom</label>
+                <input id="n-nom" name="nom" type="text" maxlength="100" autocomplete="off" aria-describedby="n-erreur-nom">
+                <p class="erreur" id="n-erreur-nom" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="n-email">E-mail</label>
+                <input id="n-email" name="email" type="email" maxlength="254" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="n-erreur-email">
+                <p class="erreur" id="n-erreur-email" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="n-mdp">Mot de passe provisoire</label>
+                <div class="champ__groupe">
+                  <!-- type="text" : l'administrateur doit pouvoir le lire pour le transmettre -->
+                  <input id="n-mdp" name="mot_de_passe" type="text" maxlength="128" autocomplete="new-password" spellcheck="false" aria-describedby="n-aide-mdp n-erreur-mot_de_passe">
+                  <button type="button" class="bouton bouton--secondaire bouton--compact" id="generer-mdp">Générer</button>
+                </div>
+                <p class="aide" id="n-aide-mdp">12 caractères au moins. Transmettez-le par un moyen sûr : la personne pourra le changer depuis cette page.</p>
+                <p class="erreur" id="n-erreur-mot_de_passe" hidden></p>
+              </div>
+              <div><button type="submit" class="bouton bouton--principal">Créer le compte</button></div>
+            </form>
+          </section>
+
+          <!-- Changer son propre mot de passe -->
+          <section class="carte" aria-labelledby="titre-mon-mdp">
+            <h2 class="carte__titre" id="titre-mon-mdp">Changer mon mot de passe</h2>
+            <form class="formulaire" id="formulaire-mdp" novalidate>
+              <p class="alerte" id="mdp-erreur" role="alert" hidden></p>
+              <div class="champ">
+                <label for="m-actuel">Mot de passe actuel</label>
+                <input id="m-actuel" name="actuel" type="password" autocomplete="current-password" maxlength="128" aria-describedby="m-erreur-actuel">
+                <p class="erreur" id="m-erreur-actuel" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="m-nouveau">Nouveau mot de passe</label>
+                <input id="m-nouveau" name="nouveau" type="password" autocomplete="new-password" maxlength="128" aria-describedby="m-aide-nouveau m-erreur-nouveau">
+                <p class="aide" id="m-aide-nouveau">12 caractères au moins. Vos autres sessions ouvertes seront fermées.</p>
+                <p class="erreur" id="m-erreur-nouveau" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="m-confirmation">Confirmez le nouveau mot de passe</label>
+                <input id="m-confirmation" name="confirmation" type="password" autocomplete="new-password" maxlength="128" aria-describedby="m-erreur-confirmation">
+                <p class="erreur" id="m-erreur-confirmation" hidden></p>
+              </div>
+              <div><button type="submit" class="bouton bouton--principal">Changer le mot de passe</button></div>
+            </form>
+          </section>
+        </div>
       </section>
     </main>
   </div>

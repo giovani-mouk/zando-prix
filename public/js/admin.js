@@ -3,6 +3,7 @@
 // Espace administrateur : story 8, features 12, 13 et 14
 // Vue Propositions : corriger, publier ou supprimer les propositions reçues.
 // Vue Messages : lire les messages de la page Contact.
+// Vue Administrateurs : comptes de l'équipe et changement de mot de passe (feature 16).
 //
 // Important : ce fichier ne « protège » rien. N'importe qui peut lire
 // son code ou ouvrir la page. La protection est dans l'API (session.js) :
@@ -26,7 +27,7 @@ const VIDES = {
 const CHAMPS_CORRECTION = ['produit_id', 'marche_id', 'montant', 'unite', 'date_constat'];
 
 const contenu = document.querySelector('#contenu');
-const VUES = ['propositions', 'messages'];
+const VUES = ['propositions', 'messages', 'administrateurs'];
 const liensMenu = [...document.querySelectorAll('.menu__lien')];
 
 const listeMessages = document.querySelector('#liste-messages');
@@ -49,6 +50,7 @@ const boutonSupprimer = document.querySelector('#suppression-confirmer');
 
 let propositions = [];
 let messages = [];
+let comptes = [];
 let filtre = 'en_attente';
 let enCorrection = null;   // proposition ouverte dans le dialogue de correction
 let aSupprimer = null;     // proposition dont on demande confirmation
@@ -127,7 +129,8 @@ async function demarrer() {
     });
   });
 
-  await Promise.all([charger(), chargerMessages()]);
+  initialiserComptes();
+  await Promise.all([charger(), chargerMessages(), chargerComptes()]);
 }
 
 // ---------------------------------------------------------------
@@ -472,6 +475,165 @@ async function basculerLu(m, bouton) {
     annonceMessages.focus();
   } catch (erreur) {
     gererErreur(erreur, annonceMessages);
+    bouton.disabled = false;
+  }
+}
+
+// ---------------------------------------------------------------
+// Comptes administrateurs (feature 16)
+// ---------------------------------------------------------------
+
+const lignesComptes = document.querySelector('#lignes-comptes');
+const annonceComptes = document.querySelector('#annonce-comptes');
+const formulaireCompte = document.querySelector('#formulaire-compte');
+const formulaireMdp = document.querySelector('#formulaire-mdp');
+
+function initialiserComptes() {
+  formulaireCompte.addEventListener('submit', creerCompte);
+  formulaireMdp.addEventListener('submit', changerMotDePasse);
+  document.querySelector('#generer-mdp').addEventListener('click', () => {
+    const champ = formulaireCompte.elements.mot_de_passe;
+    champ.value = motDePasseAleatoire();
+    champ.focus();
+    champ.select();
+  });
+}
+
+async function chargerComptes() {
+  try {
+    comptes = await api.comptes();
+    afficherComptes();
+  } catch (erreur) {
+    gererErreur(erreur, annonceComptes);
+  }
+}
+
+function afficherComptes() {
+  lignesComptes.replaceChildren(...comptes.map(ligneCompte));
+}
+
+function ligneCompte(c) {
+  let action;
+  if (c.moi) {
+    // Pas de bouton sur sa propre ligne : on ne peut pas se désactiver soi-même
+    action = el('span', { class: 'traitee' }, 'Vous');
+  } else {
+    action = el('button', {
+      type: 'button',
+      class: `bouton ${c.actif ? 'bouton--rejeter' : 'bouton--valider'} bouton--compact`,
+      'aria-label': `${c.actif ? 'Désactiver' : 'Réactiver'} le compte de ${c.nom}`,
+      onclick: (e) => basculerCompte(c, e.currentTarget),
+    }, c.actif ? 'Désactiver' : 'Réactiver');
+  }
+
+  return el('tr', {},
+    el('th', { scope: 'row' }, c.nom),
+    el('td', { class: 'compte__email' }, c.email),
+    el('td', {}, el('span', { class: `statut ${c.actif ? 'statut--actif' : 'statut--inactif'}` },
+      c.actif ? 'Actif' : 'Désactivé')),
+    el('td', { class: 'date' }, c.derniere_connexion ? formaterInstant(c.derniere_connexion) : '—'),
+    el('td', {}, action));
+}
+
+async function basculerCompte(c, bouton) {
+  bouton.disabled = true;
+  try {
+    const { administrateur } = await api.activerCompte(c.id, !c.actif);
+    comptes = comptes.map((x) => (x.id === administrateur.id ? administrateur : x));
+    annonceComptes.textContent = administrateur.actif
+      ? `Compte de ${administrateur.nom} réactivé.`
+      : `Compte de ${administrateur.nom} désactivé. Ses sessions ouvertes ont été fermées.`;
+    afficherComptes();
+    annonceComptes.focus();
+  } catch (erreur) {
+    gererErreur(erreur, annonceComptes);
+    bouton.disabled = false;
+  }
+}
+
+// 16 caractères tirés avec le générateur cryptographique du navigateur
+// (jamais Math.random, qui est prévisible). Les caractères faciles à
+// confondre (0/O, 1/l/I) sont exclus : le mot de passe sera recopié à la main.
+function motDePasseAleatoire(longueur = 16) {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789-_!';
+  const tirage = crypto.getRandomValues(new Uint32Array(longueur));
+  return Array.from(tirage, (n) => alphabet[n % alphabet.length]).join('');
+}
+
+// Affiche l'erreur de l'API sous le bon champ d'un formulaire.
+// « prefixe » : n- pour le nouveau compte, m- pour le mot de passe.
+function erreurFormulaire(formulaire, prefixe, alerte, erreur) {
+  if (erreur.statut === 401) return versConnexion();
+  const message = erreur.champ && document.querySelector(`#${prefixe}erreur-${erreur.champ}`);
+  if (message) {
+    message.textContent = erreur.message;
+    message.hidden = false;
+    const champ = formulaire.elements[erreur.champ];
+    champ.setAttribute('aria-invalid', 'true');
+    champ.focus();
+  } else {
+    alerte.textContent = erreur.message;
+    alerte.hidden = false;
+  }
+}
+
+function effacerErreursFormulaire(formulaire, alerte) {
+  alerte.hidden = true;
+  formulaire.querySelectorAll('.erreur').forEach((p) => { p.hidden = true; p.textContent = ''; });
+  formulaire.querySelectorAll('[aria-invalid]').forEach((c) => c.removeAttribute('aria-invalid'));
+}
+
+async function creerCompte(evenement) {
+  evenement.preventDefault();
+  const alerte = document.querySelector('#compte-erreur');
+  effacerErreursFormulaire(formulaireCompte, alerte);
+  const champs = formulaireCompte.elements;
+  const bouton = formulaireCompte.querySelector('[type="submit"]');
+  bouton.disabled = true;
+  try {
+    const { administrateur } = await api.creerCompte({
+      nom: champs.nom.value.trim() || undefined,
+      email: champs.email.value.trim() || undefined,
+      mot_de_passe: champs.mot_de_passe.value || undefined,
+    });
+    comptes = [...comptes, administrateur];
+    formulaireCompte.reset();
+    annonceComptes.textContent = `Compte créé pour ${administrateur.nom} (${administrateur.email}). `
+      + 'Transmettez-lui son mot de passe provisoire par un moyen sûr.';
+    afficherComptes();
+    annonceComptes.focus();
+  } catch (erreur) {
+    erreurFormulaire(formulaireCompte, 'n-', alerte, erreur);
+  } finally {
+    bouton.disabled = false;
+  }
+}
+
+async function changerMotDePasse(evenement) {
+  evenement.preventDefault();
+  const alerte = document.querySelector('#mdp-erreur');
+  effacerErreursFormulaire(formulaireMdp, alerte);
+  const champs = formulaireMdp.elements;
+
+  // Seule vérification faite dans le navigateur : les deux saisies identiques.
+  // Tout le reste (ancien mot de passe, longueur) est vérifié par l'API.
+  if (champs.nouveau.value !== champs.confirmation.value) {
+    erreurFormulaire(formulaireMdp, 'm-', alerte, {
+      champ: 'confirmation', message: 'Les deux saisies du nouveau mot de passe sont différentes.',
+    });
+    return;
+  }
+
+  const bouton = formulaireMdp.querySelector('[type="submit"]');
+  bouton.disabled = true;
+  try {
+    const { confirmation } = await api.changerMotDePasse(champs.actuel.value, champs.nouveau.value);
+    formulaireMdp.reset();
+    annonceComptes.textContent = confirmation;
+    annonceComptes.focus();
+  } catch (erreur) {
+    erreurFormulaire(formulaireMdp, 'm-', alerte, erreur);
+  } finally {
     bouton.disabled = false;
   }
 }

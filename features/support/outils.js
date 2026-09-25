@@ -31,6 +31,10 @@ export const CHAMPS = {
   nom: 'nom',
   'e-mail': 'email',
   message: 'message',
+  // Comptes administrateurs (feature 16)
+  'mot de passe': 'mot_de_passe',
+  'mot de passe actuel': 'actuel',
+  'nouveau mot de passe': 'nouveau',
 };
 
 export const LIBELLES_STATUT = Object.fromEntries(

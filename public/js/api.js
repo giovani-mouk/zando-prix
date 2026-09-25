@@ -71,4 +71,11 @@ export const api = {
   envoyerMessage: (message) => requete('/api/messages', { methode: 'POST', corps: message }),
   messages: () => requete('/api/messages'),
   marquerMessage: (id, lu) => requete(`/api/messages/${id}`, { methode: 'PATCH', corps: { lu } }),
+
+  // Comptes administrateurs (feature 16)
+  comptes: () => requete('/api/administrateurs'),
+  creerCompte: (compte) => requete('/api/administrateurs', { methode: 'POST', corps: compte }),
+  activerCompte: (id, actif) => requete(`/api/administrateurs/${id}`, { methode: 'PATCH', corps: { actif } }),
+  changerMotDePasse: (actuel, nouveau) =>
+    requete('/api/admin/mot-de-passe', { methode: 'PUT', corps: { actuel, nouveau } }),
 };
