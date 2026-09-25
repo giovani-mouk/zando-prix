@@ -75,9 +75,13 @@ Les scénarios tagués `@a-valider` reposent sur des choix pris pendant le sprin
 
 ## Espace administrateur
 
-`/admin.html` est un tableau de bord réservé aux comptes créés avec `npm run admin:creer` : barre latérale avec l'état de connexion, vue Propositions (corriger, publier, supprimer) et vue Messages (messages de la page Contact).
+`/admin.html` est un tableau de bord réservé aux comptes créés avec `npm run admin:creer` : barre latérale avec l'état de connexion, vue Propositions (corriger, publier, supprimer), vue Messages (messages de la page Contact) et vue Administrateurs (créer, désactiver et réactiver les comptes de l'équipe, changer son mot de passe).
 
  La protection est assurée par l'API : sans session valide, les routes de gestion répondent `401` et ne renvoient aucune donnée. Mots de passe hachés avec scrypt, sessions stockées en base (elles survivent aux redémarrages du serveur), cookie `HttpOnly` et `SameSite=Strict`. Détails dans [docs/contrat-api.md](docs/contrat-api.md).
+
+## Photos
+
+Les photos des produits et du carrousel restent à fournir. Emplacements, formats et droits d'utilisation : [docs/photos-produits.md](docs/photos-produits.md).
 
 ## Déploiement
 
@@ -90,9 +94,10 @@ Sur Render, avec `render.yaml` : voir la partie 4 du [guide de mise en place](do
 
 `npm run cdn:integrite` calcule l'empreinte SRI de chaque fichier et l'écrit dans les pages : le navigateur refusera un fichier modifié sur le CDN. À lancer une fois (connexion Internet nécessaire), puis après chaque changement de version.
 
-## Auteur
-Giovani MOUKOKO Akieniacademy
-
 ## Illustrations
 
 Les 24 produits et les 4 diapositives du carrousel ont des illustrations vectorielles (`public/images/**/*.svg`), légères et nettes sur tous les écrans. Pour les remplacer par des photos, voir [docs/photos-produits.md](docs/photos-produits.md).
+
+## Auteur
+
+**Giovani MOUKOKO**, développeur fullstack, Akieniacademy.

@@ -14,6 +14,7 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { gestionErreurs } from './erreurs.js';
 import admin from './routes/admin.js';
+import administrateurs from './routes/administrateurs.js';
 import marches from './routes/marches.js';
 import messages from './routes/messages.js';
 import prix from './routes/prix.js';
@@ -52,6 +53,7 @@ app.use(express.static(fileURLToPath(new URL('../public', import.meta.url))));
 app.use('/api', verifierOrigine);
 // 2. Une ressource = un routeur, monté sous son préfixe.
 app.use('/api/admin', admin);
+app.use('/api/administrateurs', administrateurs);
 app.use('/api/produits', produits);
 app.use('/api/marches', marches);
 app.use('/api/messages', messages);

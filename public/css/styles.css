@@ -282,12 +282,20 @@ a { color: var(--bleu); text-underline-offset: 0.2em; }
   font-family: var(--police-etroite);
   font-stretch: 68%;
   font-weight: 800;
-  font-size: clamp(2.25rem, 7vw + 0.5rem, 5.25rem);
+  /* Taille calculée d'après la largeur de la colonne de texte (unité cqi,
+     voir .entete__texte) et non de l'écran : sur grand écran, le carrousel
+     prend une partie de la largeur, et le titre doit tenir en 3 ou 4 lignes.
+     La première ligne sert de repli aux navigateurs anciens. */
+  font-size: clamp(2.25rem, 7vw + 0.5rem, 4.5rem);
+  font-size: clamp(2.25rem, 12.5cqi, 4.75rem);
   line-height: 0.92;
   letter-spacing: -0.015em;
-  max-width: 13ch;
+  max-width: 18ch;
+  /* Répartit les mots en lignes de longueur proche */
   text-wrap: balance;
 }
+/* La colonne de texte du héros sert de référence de taille au titre */
+.entete__texte { container-type: inline-size; }
 .titre--page {
   font-size: clamp(2.25rem, 5vw + 0.5rem, 3.5rem);
   max-width: none;
@@ -1483,4 +1491,32 @@ a { color: var(--bleu); text-underline-offset: 0.2em; }
   line-height: 1.1;
 }
 .titre-section i { color: var(--vert); font-size: 0.8em; }
+
+/* ---------- Comptes administrateurs (feature 16) ---------- */
+
+.statut--actif { color: var(--vert); background: var(--vert-pale); }
+.statut--inactif { color: var(--encre-douce); background: var(--fond); }
+
+.tableau--comptes { min-width: 40rem; }
+.compte__email { overflow-wrap: anywhere; }
+
+/* Deux formulaires côte à côte sur grand écran */
+.formulaires-comptes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+.carte__titre {
+  margin-bottom: 1rem;
+  font-family: var(--police-etroite);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+/* Champ + bouton sur la même ligne (mot de passe + « Générer ») */
+.champ__groupe { display: flex; gap: 0.5rem; }
+.champ__groupe input { flex: 1; min-width: 0; font-family: ui-monospace, Consolas, monospace; }
 

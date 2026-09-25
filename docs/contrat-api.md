@@ -254,3 +254,47 @@ Ferme la session en base et efface le cookie. Répond `204`, même sans session.
 ### 🔒 `GET /api/admin/moi`
 
 `200` avec `{ "administrateur": { "id", "nom", "email" } }`. Utilisée par les pages pour savoir si l'on est connecté.
+
+### 🔒 `PUT /api/admin/mot-de-passe`
+
+Feature 16 : changer son propre mot de passe. Corps : `{ "actuel": "...", "nouveau": "..." }`.
+
+Réponse `200` : `{ "confirmation": "..." }`. Les autres sessions du compte sont fermées, pas celle qui a fait la demande. `400` avec `champ` = `actuel` (mot de passe actuel faux) ou `nouveau` (moins de 12 caractères).
+
+## Comptes administrateurs
+
+Feature 16. Toutes les routes sont 🔒, et tous les administrateurs ont les mêmes droits. Un compte n'est jamais supprimé, seulement désactivé.
+
+### 🔒 `GET /api/administrateurs`
+
+```json
+[
+  {
+    "id": 1, "nom": "Grâce Mabiala", "email": "grace@zandoprix.cg", "actif": true,
+    "created_at": "2026-09-24T08:02:00.000Z",
+    "derniere_connexion": "2026-09-25T07:40:00.000Z", "moi": true
+  }
+]
+```
+
+`moi` vaut `true` pour le compte de la personne connectée. `derniere_connexion` est lue dans le journal des tentatives de connexion, purgé après 30 jours : elle vaut `null` au-delà.
+
+### 🔒 `POST /api/administrateurs`
+
+Corps : `{ "nom": "Awa Ngoma", "email": "awa@zandoprix.cg", "mot_de_passe": "..." }`. Réponse `201` : `{ "administrateur": {...} }`.
+
+| Code | Cas |
+|---|---|
+| 400 | `champ` = `nom`, `email` ou `mot_de_passe` (moins de 12 caractères) |
+| 409 | `champ` = `email` : un compte existe déjà avec cet e-mail, sans tenir compte des majuscules |
+
+### 🔒 `PATCH /api/administrateurs/:id`
+
+Corps : `{ "actif": false }` pour désactiver, `{ "actif": true }` pour réactiver. Désactiver ferme immédiatement toutes les sessions du compte. Réponse `200` : `{ "administrateur": {...} }`.
+
+| Code | Cas |
+|---|---|
+| 400 | `actif` n'est pas un booléen |
+| 404 | compte inexistant |
+| 409 | tentative de désactiver son propre compte |
+
