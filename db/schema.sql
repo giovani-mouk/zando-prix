@@ -13,6 +13,10 @@ BEGIN;
 -- IF EXISTS : pas d'erreur lors de la toute première exécution.
 DROP VIEW   IF EXISTS v_grille_prix;
 DROP VIEW   IF EXISTS v_prix_actuels;
+DROP TABLE  IF EXISTS schema_migrations;
+DROP TABLE  IF EXISTS prix_officiels;
+DROP TABLE  IF EXISTS confirmations_prix;
+DROP TABLE  IF EXISTS confirmations;
 DROP TABLE  IF EXISTS sessions;
 DROP TABLE  IF EXISTS tentatives_connexion;
 DROP TABLE  IF EXISTS prix;
@@ -149,6 +153,13 @@ CREATE TABLE propositions (
   unite         unite_mesure NOT NULL,
   date_constat  DATE         NOT NULL,                        -- date où l'utilisateur a vu le prix
   auteur        VARCHAR(100),                                 -- pseudo optionnel
+  -- Comment le prix a été constaté, et repère facultatif (réservé à l'équipe)
+  constat       VARCHAR(10)  CONSTRAINT chk_proposition_constat
+                CHECK (constat IN ('direct', 'ticket', 'pesee')),
+  repere        VARCHAR(120),
+  -- Suivi privé (empreinte de la clé remise à l'auteur) et photo de preuve
+  cle_suivi     CHAR(64),
+  photo_url     VARCHAR(300),
   statut        VARCHAR(20)  NOT NULL DEFAULT 'en_attente'
                 CHECK (statut IN ('en_attente', 'validee', 'rejetee')),
   created_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
@@ -278,5 +289,67 @@ CROSS JOIN marches m
 LEFT JOIN v_prix_actuels v
        ON v.produit_id = pr.id
       AND v.marche_id  = m.id;
+
+-- -------------------------------------------------------------
+-- Confirmations citoyennes (identique à db/migrations/001_confirmations.sql)
+-- -------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS confirmations (
+  id              INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  proposition_id  INTEGER      NOT NULL REFERENCES propositions(id) ON DELETE CASCADE,
+  -- Qui confirme : réponse déclarative, jamais vérifiée
+  role            VARCHAR(20)  NOT NULL CHECK (role IN ('acheteur', 'commercant', 'visiteur')),
+  -- true : « Oui, prix identique » ; false : « Non, écart constaté »
+  conforme        BOOLEAN      NOT NULL,
+  commentaire     VARCHAR(300),
+  -- Empreinte SHA-256 de « adresse IP : numéro de proposition » : empêche de
+  -- confirmer deux fois la même proposition, sans garder l'adresse, et sans
+  -- permettre de relier les confirmations d'une même personne entre elles.
+  empreinte       CHAR(64)     NOT NULL,
+  created_at      TIMESTAMPTZ  NOT NULL DEFAULT now(),
+  CONSTRAINT uq_confirmation_unique UNIQUE (proposition_id, empreinte)
+);
+
+CREATE INDEX IF NOT EXISTS idx_confirmations_proposition ON confirmations (proposition_id);
+
+-- -------------------------------------------------------------
+-- Confirmations des prix publiés (migration 003)
+-- -------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS confirmations_prix (
+  id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  prix_id    INTEGER     NOT NULL REFERENCES prix(id) ON DELETE CASCADE,
+  conforme   BOOLEAN     NOT NULL,
+  empreinte  CHAR(64)    NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT uq_confirmation_prix UNIQUE (prix_id, empreinte)
+);
+
+CREATE INDEX IF NOT EXISTS idx_confirmations_prix ON confirmations_prix (prix_id);
+
+-- -------------------------------------------------------------
+-- Prix officiels du Ministère du Commerce (migration 004)
+-- -------------------------------------------------------------
+CREATE TABLE prix_officiels (
+  id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  produit_id  INTEGER      NOT NULL REFERENCES produits(id) ON DELETE RESTRICT,
+  type        VARCHAR(10)  NOT NULL CHECK (type IN ('plafond', 'indicatif')),
+  montant     INTEGER      NOT NULL CHECK (montant > 0),
+  unite       unite_mesure NOT NULL,
+  date_effet  DATE         NOT NULL,
+  reference   VARCHAR(200) NOT NULL,
+  cree_par    INTEGER      REFERENCES administrateurs(id) ON DELETE RESTRICT,
+  created_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
+  retire_le   TIMESTAMPTZ
+);
+CREATE INDEX idx_prix_officiels_produit ON prix_officiels (produit_id, type, date_effet DESC);
+
+-- -------------------------------------------------------------
+-- Suivi des migrations : une base créée par ce fichier est déjà à jour,
+-- on note donc les migrations comme appliquées (voir src/migrations.js)
+-- -------------------------------------------------------------
+CREATE TABLE schema_migrations (
+  nom          VARCHAR(200) PRIMARY KEY,
+  appliquee_le TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+INSERT INTO schema_migrations (nom) VALUES ('001_confirmations.sql'), ('002_details_proposition.sql'), ('003_confirmations_prix.sql'), ('004_prix_officiels.sql'), ('005_suivi_et_photo.sql');
 
 COMMIT;

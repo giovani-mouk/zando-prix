@@ -76,8 +76,8 @@ Given('les propositions suivantes :', async function (table) {
 
     const { rows } = await this.db.query(
       `INSERT INTO propositions
-         (produit_id, marche_id, montant, unite, date_constat, statut, traitee_le)
-       VALUES ($1, $2, $3, $4, CURRENT_DATE, $5, $6)
+         (produit_id, marche_id, montant, unite, date_constat, statut, traitee_le, auteur, constat)
+       VALUES ($1, $2, $3, $4, CURRENT_DATE - $8::int, $5, $6, $7, $9)
        RETURNING id`,
       [
         produitId,
@@ -86,6 +86,11 @@ Given('les propositions suivantes :', async function (table) {
         ligne['unité'],
         statut,
         statut === 'en_attente' ? null : new Date(),
+        // Colonne facultative : le nom ou pseudo saisi par l'auteur
+        ligne.auteur || null,
+        // Colonnes facultatives : ancienneté du constat, type de constatation
+        Number(ligne['constatée il y a (jours)'] ?? 0),
+        ligne.constat || null,
       ],
     );
     const id = rows[0].id;

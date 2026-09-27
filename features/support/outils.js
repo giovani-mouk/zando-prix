@@ -31,6 +31,17 @@ export const CHAMPS = {
   nom: 'nom',
   'e-mail': 'email',
   message: 'message',
+  // Confirmation d'une proposition (feature 18)
+  'rôle': 'role',
+  constat: 'conforme',
+  'type de constatation': 'constat',
+  'date de début': 'depuis',
+  avis: 'conforme',
+  'repère': 'repere',
+  'type officiel': 'type',
+  'référence': 'reference',
+  photo: 'photo_url',
+  commentaire: 'commentaire',
   // Comptes administrateurs (feature 16)
   'mot de passe': 'mot_de_passe',
   'mot de passe actuel': 'actuel',

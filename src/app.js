@@ -20,6 +20,11 @@ import messages from './routes/messages.js';
 import prix from './routes/prix.js';
 import produits from './routes/produits.js';
 import propositions from './routes/propositions.js';
+import registre, { exporterCsv } from './routes/registre.js';
+import { exigerAdmin } from './session.js';
+import tendance from './routes/tendance.js';
+import photos from './routes/photos.js';
+import prixOfficiels from './routes/prix-officiels.js';
 import { verifierOrigine } from './session.js';
 
 const app = express();
@@ -59,6 +64,14 @@ app.use('/api/marches', marches);
 app.use('/api/messages', messages);
 app.use('/api/prix', prix);
 app.use('/api/propositions', propositions);
+app.use('/api/tendance', tendance);
+app.use('/api/photos', photos);
+app.use('/api/prix-officiels', prixOfficiels);
+// Registre des propositions : réservé à l'équipe (décision du PM), comme
+// sa page « Suivi » et sa page d'export, accessibles depuis le back-office.
+// Adresse exacte d'abord : /api/registre.csv n'est pas une sous-adresse de /api/registre
+app.get('/api/registre.csv', exigerAdmin, exporterCsv);
+app.use('/api/registre', exigerAdmin, registre);
 
 // 3. Aucune route /api n'a répondu : on renvoie un 404 au format JSON du
 //    contrat d'API, plutôt que la page HTML d'erreur par défaut d'Express.

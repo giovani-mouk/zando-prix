@@ -1,0 +1,347 @@
+<!doctype html>
+<!-- =============================================================
+     public/export.html : export et impression du registre (maquette du PM)
+     Données : GET /api/registre?tout=1 (mêmes filtres que le CSV). Script : /js/export.js
+     ============================================================= -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <!-- Sans cette ligne, un téléphone afficherait la page comme un écran
+       d'ordinateur rétréci, avec un texte minuscule. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Export et impression du registre : Zando Prix</title>
+  <meta name="description" content="Imprimez ou téléchargez le registre des propositions de prix des marchés de Brazzaville (PDF, CSV, Excel).">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#15803d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%2315803d'/%3E%3Cpath d='M12 11h16v4L18.5 25H28v4H12v-4l9.5-10H12z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Plus Jakarta Sans : titres et prix. Inter : textes et formulaires. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  <!-- Icônes Material Symbols (maquette du PM). display=block : pendant le
+       chargement, l'icône reste invisible au lieu d'afficher son nom. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add,add_a_photo,add_circle,add_location_alt,add_shopping_cart,add_task,analytics,archive,arrow_back,arrow_downward,arrow_forward,arrow_upward,assignment_turned_in,assured_workload,backspace,badge,balance,bar_chart,block,bolt,calculate,calendar_month,campaign,cancel,category,check,check_circle,chevron_left,chevron_right,close,code,compare_arrows,content_copy,crisis_alert,crop_landscape,crop_portrait,csv,delete,description,diversity_3,done_all,donut_large,download,eco,edit,edit_calendar,edit_note,emoji_events,equalizer,event,expand_more,explore,fact_check,favorite,favorite_border,feed,fingerprint,folder_zip,fullscreen,gavel,grain,grid_view,group,group_add,groups,handshake,help_outline,history,history_edu,history_toggle_off,home,hourglass_empty,hourglass_top,how_to_reg,info,inventory_2,lightbulb,local_fire_department,location_city,location_on,lock,logout,mail,manage_search,menu,mic,military_tech,new_releases,notification_add,nutrition,open_in_new,pending_actions,person,person_check,photo_camera,picture_as_pdf,playlist_add_check,print,priority_high,public,query_stats,rate_review,receipt_long,refresh,remove,restart_alt,rule,savings,scale,schedule,search,security,send,share,shield,shield_with_heart,shopping_bag,shopping_basket,smartphone,sort,speed,store,storefront,straighten,swap_driving_apps_wheel,swap_horiz,sync,table_rows,table_view,task_alt,terminal,thumb_down,thumb_up,timeline,timer,tips_and_updates,trending_down,trending_flat,trending_up,troubleshoot,tune,unfold_more,update,verified,verified_user,view_column,visibility,visibility_off,warning,water_drop&display=block">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="module" src="/js/menu.js"></script>
+  <script type="module" src="/js/coquille.js"></script>
+  <!-- type="module" : permet import/export, et le script ne s'exécute qu'une
+       fois le HTML entièrement lu (comme l'attribut defer). -->
+  <script type="module" src="/js/export.js"></script>
+</head>
+<body class="page-export">
+  <header class="bandeau">
+    <div class="entete__barre">
+      <a class="marque" href="/">
+        <span class="marque__carre" aria-hidden="true"><span class="ms" aria-hidden="true">storefront</span></span>
+        <svg class="marque__z" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="currentColor"/><path d="M12 11h16v4L18.5 25H28v4H12v-4l9.5-10H12z" fill="#fff"/></svg>
+        <span class="marque__texte">
+          <span class="marque__ligne"><span class="marque__nom">Zando Prix</span><span class="marque__ville">Brazza</span></span>
+          <span class="marque__slogan">L'observatoire des marchés de Brazzaville</span>
+          <span class="marque__page">Export du registre</span>
+        </span>
+      </a>
+      <nav class="navigation" id="navigation" aria-label="Navigation principale">
+        <ul>
+          <li><a href="/">Accueil &amp; Recherche</a></li>
+          <li><a href="/comparateur.html">Comparateur de prix</a></li>
+          <li><a href="/produit.html">Détail produit</a></li>
+          <li><a href="/officiels.html">Prix officiels</a></li>
+          <li><a href="/fraicheur.html">Guide Fraîcheur &amp; États</a></li>
+        </ul>
+      </nav>
+      <div class="entete__actions">
+        <!-- « Votre marché » : mémorisé dans ce navigateur, rempli par /js/coquille.js -->
+        <label class="choix-marche">
+          <span class="ms" aria-hidden="true">location_on</span>
+          <span class="sr-only">Votre marché</span>
+          <select id="marche-reference"><option value="">Tous les marchés</option></select>
+          <span class="ms choix-marche__fleche" aria-hidden="true">expand_more</span>
+        </label>
+        <a class="bouton-proposer" href="/?proposer=1"><span class="ms" aria-hidden="true">add_circle</span><span class="bouton-proposer__texte">Proposer un prix</span></a>
+        <button type="button" class="entete__rond entete__actualiser" data-actualiser>
+          <span class="ms" aria-hidden="true">sync</span><span class="entete__point" aria-hidden="true"></span><span class="sr-only">Actualiser les prix</span>
+        </button>
+        <a class="entete__profil" href="/admin.html" title="Espace administrateur"><span class="ms" aria-hidden="true">person</span><span class="sr-only">Espace administrateur</span></a>
+        <!-- Menu burger (tablette) : affiché par /js/menu.js -->
+        <button type="button" class="burger" aria-expanded="false" aria-controls="navigation" hidden>
+          <span class="burger__lignes" aria-hidden="true"></span>
+          <span class="sr-only">Menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <p class="bandeau-equipe"><span class="conteneur bandeau-equipe__interieur"><span><span class="ms" aria-hidden="true">lock</span> Page réservée à l'équipe Zando Prix</span><a href="/admin.html"><span class="ms" aria-hidden="true">arrow_back</span> Retour au back-office</a></span></p>
+  <main class="conteneur export">
+    <nav class="ariane" aria-label="Fil d'Ariane">
+      <a href="/"><span class="ms" aria-hidden="true">home</span><span>Accueil</span></a><span class="ms ariane__chevron" aria-hidden="true">chevron_right</span>
+      <span>Observatoire</span><span class="ms ariane__chevron" aria-hidden="true">chevron_right</span>
+      <a href="/suivi.html">Suivi des propositions</a><span class="ms ariane__chevron" aria-hidden="true">chevron_right</span>
+      <span class="ariane__courant" aria-current="page">Export &amp; Impression du Registre</span>
+    </nav>
+
+    <section class="export__entete" aria-labelledby="titre-export">
+      <div class="export__entete-texte">
+        <p class="pastille-protocole"><span class="ms" aria-hidden="true">verified_user</span> Registre public • Brazzaville</p>
+        <h1 class="export__titre" id="titre-export">Export &amp; Impression du Registre des Cotations</h1>
+        <p class="export__chapeau">Générez un extrait prêt à imprimer au format A4 (ou à enregistrer en PDF), ou téléchargez les données brutes ouvertes (CSV, Excel) pour l'analyse économique et citoyenne.</p>
+      </div>
+      <div class="volume-export">
+        <span class="volume-export__icone"><span class="ms" aria-hidden="true">folder_zip</span></span>
+        <div>
+          <p class="volume-export__libelle">Volume d'export actuel</p>
+          <p class="volume-export__valeur" id="volume">…</p>
+          <p class="volume-export__date" id="volume-date"></p>
+        </div>
+      </div>
+    </section>
+
+      <section class="barre-export" aria-labelledby="titre-donnees">
+        <h2 class="sr-only" id="titre-donnees">Données à exporter</h2>
+        <div class="barre-export__filtres">
+        <label class="champ-export">
+          <span class="champ-export__libelle"><span class="ms" aria-hidden="true">calendar_month</span> Période du relevé</span>
+          <select id="periode">
+            <option value="0">Aujourd'hui</option>
+            <option value="7">7 derniers jours</option>
+            <option value="30" selected>30 derniers jours</option>
+            <option value="tout">Tout le registre</option>
+            <option value="perso">Personnalisée…</option>
+          </select>
+        </label>
+        <label class="champ-export" id="bloc-date" hidden>
+          <span class="champ-export__libelle">Depuis le</span>
+          <input type="date" id="depuis">
+        </label>
+        <label class="champ-export">
+          <span class="champ-export__libelle"><span class="ms" aria-hidden="true">storefront</span> Périmètre des marchés</span>
+          <select id="marche"><option value="">Tous les marchés de Brazzaville</option></select>
+        </label>
+        <label class="interrupteur">
+          <input type="checkbox" id="publiees">
+          <span class="interrupteur__piste" aria-hidden="true"></span>
+          <span><span class="ms texte-vert" aria-hidden="true">verified</span> Seulement les publiées</span>
+        </label>
+        </div>
+        <div class="boutons-export">
+          <button type="button" class="bouton-export bouton-export--principal" data-imprimer><span class="ms" aria-hidden="true">print</span> Imprimer A4 (PDF)</button>
+          <button type="button" class="bouton-export" data-imprimer><span class="ms" aria-hidden="true">picture_as_pdf</span> Enregistrer en PDF</button>
+          <a class="bouton-export" id="lien-csv" href="/api/registre.csv" download><span class="ms" aria-hidden="true">csv</span> CSV brut</a>
+          <button type="button" class="bouton-export" id="excel"><span class="ms" aria-hidden="true">table_view</span> Excel (.xlsx)</button>
+        </div>
+      </section>
+
+    <div class="export__grille">
+      <!-- Réglages -->
+      <div class="export__reglages">
+
+        <section class="panneau-export" aria-labelledby="titre-mise-en-page">
+          <div class="panneau-export__haut">
+            <h2 class="panneau-export__titre" id="titre-mise-en-page"><span class="ms" aria-hidden="true">tune</span> Mise en page du document</h2>
+            <span class="pastille-iso">ISO A4</span>
+          </div>
+          <fieldset class="orientation">
+            <legend class="champ-export__libelle">Orientation du bordereau</legend>
+            <label><input type="radio" name="orientation" value="portrait" checked><span><span class="ms" aria-hidden="true">crop_portrait</span> A4 Portrait</span></label>
+            <label><input type="radio" name="orientation" value="paysage"><span><span class="ms" aria-hidden="true">crop_landscape</span> A4 Paysage</span></label>
+          </fieldset>
+          <fieldset class="options-export">
+            <legend class="champ-export__libelle">Options du document</legend>
+            <label class="option-export">
+              <input type="checkbox" id="opt-empreinte" checked>
+              <span><strong>Empreinte numérique SHA-256</strong><small>Calculée sur les données exportées : toute modification du fichier la change</small></span>
+            </label>
+            <label class="option-export">
+              <input type="checkbox" id="opt-mentions" checked>
+              <span><strong>Mentions de transparence</strong><small>Rappelle la source, la méthode de vérification et l'absence de données personnelles</small></span>
+            </label>
+            <label class="option-export">
+              <input type="checkbox" id="opt-condense">
+              <span><strong>Affichage condensé</strong><small>Plus de lignes par feuille, pour économiser le papier</small></span>
+            </label>
+          </fieldset>
+          <fieldset class="colonnes-export">
+            <legend class="champ-export__libelle">Colonnes à imprimer <button type="button" class="tout-cocher" id="tout-cocher">Tout cocher</button></legend>
+              <label class="colonne-export">
+                <input type="checkbox" name="colonne" value="reference" checked disabled>
+                <span>Réf. proposition &amp; date</span>
+                <span class="colonne-export__etat">Requis</span>
+              </label>
+              <label class="colonne-export">
+                <input type="checkbox" name="colonne" value="produit" checked disabled>
+                <span>Produit &amp; unité</span>
+                <span class="colonne-export__etat">Requis</span>
+              </label>
+              <label class="colonne-export">
+                <input type="checkbox" name="colonne" value="marche" checked>
+                <span>Marché</span>
+                <span class="colonne-export__etat">Actif</span>
+              </label>
+              <label class="colonne-export">
+                <input type="checkbox" name="colonne" value="prix" checked>
+                <span>Prix constaté &amp; écart</span>
+                <span class="colonne-export__etat">Actif</span>
+              </label>
+              <label class="colonne-export">
+                <input type="checkbox" name="colonne" value="constat" checked>
+                <span>Type de constatation</span>
+                <span class="colonne-export__etat">Actif</span>
+              </label>
+              <label class="colonne-export">
+                <input type="checkbox" name="colonne" value="statut" checked>
+                <span>Statut de vérification</span>
+                <span class="colonne-export__etat">Actif</span>
+              </label>
+          </fieldset>
+          <div class="estimation">
+            <span><span class="ms" aria-hidden="true">description</span> Estimation de sortie</span>
+            <strong id="estimation"></strong>
+          </div>
+        </section>
+
+        <aside class="usage-terrain">
+          <span class="ms texte-sarcelle" aria-hidden="true">info</span>
+          <p><strong>Usage terrain &amp; affichage public.</strong> Ce bordereau peut être affiché par les associations de commerçantes ou de consommateurs&nbsp;: l'empreinte imprimée permet à chacun de vérifier qu'il correspond au fichier publié.</p>
+        </aside>
+      </div>
+
+      <!-- Aperçu -->
+      <section class="apercu" aria-labelledby="titre-apercu">
+        <div class="apercu__barre">
+          <h2 class="apercu__titre" id="titre-apercu"><span class="ms" aria-hidden="true">visibility</span> Aperçu avant impression <span id="apercu-feuille"></span></h2>
+          <div class="apercu__zoom">
+            <button type="button" id="zoom-moins" aria-label="Réduire l'aperçu"><span class="ms" aria-hidden="true">remove</span></button>
+            <output id="zoom-valeur">100%</output>
+            <button type="button" id="zoom-plus" aria-label="Agrandir l'aperçu"><span class="ms" aria-hidden="true">add</span></button>
+            <button type="button" id="plein-ecran" aria-label="Aperçu en plein écran"><span class="ms" aria-hidden="true">fullscreen</span></button>
+          </div>
+        </div>
+        <div class="apercu__cadre" id="apercu-cadre">
+          <article class="feuille" id="feuille">
+            <header class="feuille__entete">
+              <div class="feuille__marque">
+                <span class="feuille__logo"><span class="ms" aria-hidden="true">storefront</span></span>
+                <div>
+                  <p class="feuille__nom">ZANDO PRIX <span>REGISTRE</span></p>
+                  <p class="feuille__slogan">L'observatoire citoyen des marchés de Brazzaville</p>
+                </div>
+              </div>
+              <div class="feuille__registre">
+                <p class="feuille__registre-titre">Registre numérique</p>
+                <p id="f-numero"></p>
+                <p id="f-horodatage"></p>
+                <p id="f-empreinte"></p>
+              </div>
+            </header>
+            <p class="feuille__bandeau">Extrait du registre public des propositions de prix</p>
+            <p class="feuille__periode"><span>Période : <strong id="f-periode"></strong></span><span>Marchés couverts : <strong id="f-marches"></strong></span></p>
+            <div class="feuille__chiffres" id="f-chiffres"></div>
+            <table class="feuille__tableau">
+              <thead><tr id="f-entete"></tr></thead>
+              <tbody id="f-lignes"><tr><td class="chargement">Chargement du registre…</td></tr></tbody>
+            </table>
+            <footer class="feuille__pied">
+              <div id="f-mentions">
+                <p class="feuille__pied-titre">Source &amp; méthode</p>
+                <p>Extrait édité automatiquement par Zando Prix à partir du registre public. Les propositions « publiées » ont été vérifiées par l'équipe avant de devenir le prix affiché ; les autres sont en attente ou n'ont pas été retenues. Ce document ne contient aucune donnée personnelle (ni nom, ni téléphone, ni repère sur place).</p>
+              </div>
+              <div class="feuille__signature">
+                <p><span class="ms" aria-hidden="true">verified</span> Observatoire Zando Prix</p>
+                <p>Brazzaville</p>
+              </div>
+            </footer>
+            <p class="feuille__numero" id="f-feuillet"></p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <!-- Données ouvertes -->
+    <section class="donnees-ouvertes" id="donnees-ouvertes" aria-labelledby="titre-ouvertes">
+      <div class="donnees-ouvertes__texte">
+        <p class="donnees-ouvertes__surtitre"><span class="ms" aria-hidden="true">terminal</span> Données ouvertes • Pour chercheurs, ONG &amp; médias</p>
+        <h2 class="donnees-ouvertes__titre" id="titre-ouvertes">Schéma des données brutes &amp; accès programmatique</h2>
+        <p>Les données du registre sont publiques et disponibles en CSV (UTF-8, séparateur point-virgule, lisible par Excel) et en JSON.</p>
+        <div class="donnees-ouvertes__boutons">
+          <a class="bouton-sombre" href="/api/registre.csv" download><span class="ms" aria-hidden="true">archive</span> Tout le registre (CSV)</a>
+          <button type="button" class="bouton-sombre bouton-sombre--contour" id="copier-api"><span class="ms" aria-hidden="true">content_copy</span> Copier l'adresse de l'API</button>
+        </div>
+        <div class="champs-csv">
+          <p class="champs-csv__titre"><span class="ms" aria-hidden="true">view_column</span> Champs du fichier .CSV</p>
+          <dl>
+            <div><dt>reference</dt><dd>Référence de la proposition (#PROP-0001)</dd></div>
+            <div><dt>recue_le</dt><dd>Date et heure de réception (ISO 8601)</dd></div>
+            <div><dt>produit, categorie</dt><dd>Produit et catégorie</dd></div>
+            <div><dt>marche</dt><dd>Marché de Brazzaville</dd></div>
+            <div><dt>montant_fcfa, unite</dt><dd>Prix proposé et unité (kg, tas, pièce…)</dd></div>
+            <div><dt>date_constat, constat</dt><dd>Date et type de constatation</dd></div>
+            <div><dt>statut</dt><dd>en_attente, validee ou rejetee</dd></div>
+            <div><dt>prix_affiche_fcfa, ecart_fcfa</dt><dd>Prix affiché à cette date et écart</dd></div>
+          </dl>
+        </div>
+      </div>
+      <div class="exemple-api">
+        <p class="exemple-api__titre">Exemple d'appel (JSON)</p>
+        <pre><code id="exemple-curl"></code></pre>
+        <p class="exemple-api__licence">Réutilisation libre avec mention de la source « Zando Prix » (licence précise à confirmer par l'équipe).</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span class="ms" aria-hidden="true">check_circle</span><span id="toast-message"></span>
+  </div>
+
+  <footer class="pied">
+    <div class="pied__contenu">
+      <div class="pied__marque">
+        <a class="pied__logo" href="/"><span class="marque__carre marque__carre--petit" aria-hidden="true"><span class="ms" aria-hidden="true">storefront</span></span>Zando Prix</a>
+        <p>Transparence des prix du panier de la ménagère brazzavilloise. Un observatoire citoyen et neutre au service de votre pouvoir d'achat.</p>
+        <p class="pied__verifie"><span class="ms" aria-hidden="true">verified</span> Données citoyennes vérifiées</p>
+      </div>
+
+      <nav class="pied__colonne" aria-labelledby="pied-marches">
+        <h2 class="pied__titre" id="pied-marches">Marchés de Brazzaville</h2>
+        <!-- Rempli par /js/coquille.js depuis l'API : la liste suit la base -->
+        <ul id="pied-liste-marches"></ul>
+      </nav>
+
+      <nav class="pied__colonne" aria-labelledby="pied-outils">
+        <h2 class="pied__titre" id="pied-outils">Observatoire &amp; Outils</h2>
+        <ul>
+          <li><a href="/">Recherche par vivres frais</a></li>
+          <li><a href="/comparateur.html">Indice du panier de la ménagère</a></li>
+          <li><a href="/fraicheur.html">Normes de calibrage &amp; tas</a></li>
+          <li><a href="/officiels.html">Prix officiels du Ministère</a></li>
+        </ul>
+      </nav>
+
+      <div class="pied__colonne">
+        <h2 class="pied__titre">Fiabilité &amp; Fraîcheur</h2>
+        <div class="pied__encart">
+          <p class="pied__encart-titre"><span class="ms" aria-hidden="true">schedule</span> Fraîcheur des cotations</p>
+          <p>Toutes les cotations de plus de 7 jours sont signalées, pour être réactualisées par les visiteurs des marchés.</p>
+        </div>
+        <p class="pied__pastille"><span class="ms" aria-hidden="true">eco</span> Prix relevés à Brazzaville</p>
+      </div>
+    </div>
+    <div class="pied__bas">
+      <p>© 2026 Zando Prix — Plateforme civique et libre des marchés de Brazzaville.</p>
+      <ul>
+        <li><a href="/officiels.html">Prix officiels</a></li>
+        <li><a href="/a-propos.html">À propos</a></li>
+        <li><a href="/contact.html">Contact presse &amp; collectifs</a></li>
+        <li><a href="/admin.html">Espace administrateur</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <nav class="barre-mobile" aria-label="Navigation rapide">
+    <a class="barre-mobile__lien" href="/"><span class="ms" aria-hidden="true">storefront</span><span>Accueil</span></a>
+    <a class="barre-mobile__lien" href="/comparateur.html"><span class="ms" aria-hidden="true">balance</span><span>Comparer</span></a>
+    <a class="barre-mobile__lien barre-mobile__proposer" href="/?proposer=1"><span class="barre-mobile__rond" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span><span>Proposer</span></a>
+    <a class="barre-mobile__lien" href="/officiels.html"><span class="ms" aria-hidden="true">gavel</span><span>Officiels</span></a>
+    <a class="barre-mobile__lien" href="/fraicheur.html"><span class="ms" aria-hidden="true">eco</span><span>Fraîcheur</span></a>
+  </nav>
+</body>
+</html>
