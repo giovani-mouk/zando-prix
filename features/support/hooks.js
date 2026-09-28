@@ -50,7 +50,7 @@ BeforeAll(async function () {
 // compteurs d'identifiants à 1 ; CASCADE vide aussi les tables liées.
 Before(async function () {
   await contexte.pool.query(
-    `TRUNCATE prix, propositions, marches, produits, messages,
+    `TRUNCATE prix_officiels, confirmations_prix, prix, confirmations, propositions, marches, produits, messages,
               sessions, tentatives_connexion, administrateurs
      RESTART IDENTITY CASCADE`,
   );

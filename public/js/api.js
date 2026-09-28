@@ -67,6 +67,29 @@ export const api = {
   deconnexion: () => requete('/api/admin/deconnexion', { methode: 'POST' }),
   moi: () => requete('/api/admin/moi'),
 
+  // Tendance des prix sur 7 jours (bandeau de l'accueil)
+  tendance: () => requete('/api/tendance'),
+  // Derniers relevés et stabilité sur 30 jours d'un produit (fiche produit)
+  historique: (produitId) => requete(`/api/produits/${produitId}/historique`),
+  // Une proposition du registre public (page de confirmation d'envoi)
+  propositionPublique: (id) => requete(`/api/registre/${id}`),
+  // Suivi privé d'une proposition par la personne qui l'a envoyée (clé)
+  suiviProposition: (id, cle) => requete(`/api/propositions/${id}/suivi`, { params: { cle } }),
+  // Prix officiels du Ministère du Commerce (feature 23)
+  prixOfficiels: () => requete('/api/prix-officiels'),
+  prixOfficielsTous: () => requete('/api/prix-officiels/tous'),
+  saisirPrixOfficiel: (prix) => requete('/api/prix-officiels', { methode: 'POST', corps: prix }),
+  retirerPrixOfficiel: (id) => requete(`/api/prix-officiels/${id}`, { methode: 'DELETE' }),
+  // Autorisation d'envoyer une photo chez Cloudinary (feature 24)
+  signaturePhoto: () => requete('/api/photos/signature'),
+  // « Ce prix est-il toujours le bon ? » (feature 22)
+  confirmerPrix: (prixId, conforme) => requete(`/api/prix/${prixId}/confirmations`, { methode: 'POST', corps: { conforme } }),
+
+  // Registre public des propositions et confirmations (page Suivi)
+  registre: (filtres) => requete('/api/registre', { params: filtres }),
+  confirmer: (id, avis) =>
+    requete(`/api/propositions/${id}/confirmations`, { methode: 'POST', corps: avis }),
+
   // Page Contact (publique) et lecture des messages (administrateur)
   envoyerMessage: (message) => requete('/api/messages', { methode: 'POST', corps: message }),
   messages: () => requete('/api/messages'),

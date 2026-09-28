@@ -1,0 +1,51 @@
+# =============================================================
+# render.yaml : description du déploiement sur Render (« Blueprint »)
+#
+# Render lit ce fichier et crée d'un coup :
+# - une base PostgreSQL ;
+# - un service web Node.js qui lance « npm start ».
+# Les deux sont à Francfort : chaque requête SQL fait un trajet court.
+#
+# Offre gratuite (à vérifier sur render.com/pricing avant de s'engager) :
+# - le service s'endort après 15 minutes sans visite ; la visite suivante
+#   attend environ une minute qu'il se réveille ;
+# - la base gratuite expire 30 jours après sa création (14 jours de
+#   grâce pour passer à une offre payante, puis elle est supprimée).
+# =============================================================
+databases:
+  - name: zando-prix-db
+    databaseName: zando_prix
+    user: zando_prix
+    plan: free
+    region: frankfurt
+
+services:
+  - type: web
+    name: zando-prix
+    runtime: node
+    plan: free
+    region: frankfurt
+    # npm ci installe exactement les versions de package-lock.json ;
+    # --omit=dev ignore Cucumber et Supertest, inutiles en production.
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    # Render vérifie cette adresse (qui interroge la base) avant de mettre
+    # une nouvelle version en ligne : un déploiement cassé n'est jamais servi.
+    healthCheckPath: /api/marches
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Adresse INTERNE de la base : le trafic ne sort pas du réseau privé de Render
+      - key: DATABASE_URL
+        fromDatabase:
+          name: zando-prix-db
+          property: connectionString
+      # Premier compte administrateur, créé au premier démarrage (src/amorcage.js).
+      # sync: false : Render demande la valeur à la création, elle n'est jamais
+      # écrite dans ce fichier ni dans Git.
+      - key: ADMIN_NOM
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_MOT_DE_PASSE
+        sync: false

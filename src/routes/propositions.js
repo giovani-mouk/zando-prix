@@ -9,16 +9,21 @@
 // par un administrateur. Tant qu'elle est en attente, elle ne touche pas
 // à la table « prix ».
 // =============================================================
+import { createHash, randomBytes } from 'node:crypto';
 import { Router } from 'express';
 import { existe, pool } from '../db.js';
 import { ErreurApi } from '../erreurs.js';
 import { exigerAdmin } from '../session.js';
 import { STATUTS, UNITES, dateValide, entierPositif } from '../validation.js';
+import { photoAcceptee } from '../photos.js';
+import { ligneDuRegistre } from './registre.js';
 
 const router = Router();
 
 const DECISIONS = ['validee', 'rejetee'];
 const AUTEUR_MAX = 100;
+const CONSTATS = ['direct', 'ticket', 'pesee'];
+const REPERE_MAX = 120;
 
 // Requête de lecture commune à toutes les routes : les jointures ajoutent
 // les noms du produit, du marché et des administrateurs.
@@ -26,9 +31,11 @@ const AUTEUR_MAX = 100;
 // attente n'a été traitée par personne, elle doit quand même apparaître.
 const SELECT_PROPOSITION = `
   SELECT p.id, p.produit_id, pr.nom AS produit, p.marche_id, m.nom AS marche,
-         p.montant, p.unite, p.date_constat, p.auteur, p.statut,
+         p.montant, p.unite, p.date_constat, p.auteur, p.constat, p.repere, p.photo_url, p.statut,
          p.created_at, p.traitee_le, ta.nom AS traitee_par,
-         p.corrigee_le, ca.nom AS corrigee_par
+         p.corrigee_le, ca.nom AS corrigee_par,
+         (SELECT COUNT(*)::int FROM confirmations c WHERE c.proposition_id = p.id) AS confirmations,
+         (SELECT COUNT(*)::int FROM confirmations c WHERE c.proposition_id = p.id AND c.conforme) AS confirmations_identiques
   FROM propositions p
   JOIN produits pr ON pr.id = p.produit_id
   JOIN marches  m  ON m.id  = p.marche_id
@@ -87,7 +94,32 @@ async function validerProposition(corps) {
     auteur = corps.auteur.trim() || null;
   }
 
-  return { ...champs, auteur };
+  // Facultatifs (maquette) : type de constatation et repère sur place
+  let constat = null;
+  if (corps.constat !== undefined && corps.constat !== null) {
+    if (!CONSTATS.includes(corps.constat)) {
+      throw new ErreurApi(400, 'Le type de constatation doit être : relevé sur l\'étal, ticket ou pesée.', 'constat');
+    }
+    constat = corps.constat;
+  }
+  let repere = null;
+  if (corps.repere !== undefined && corps.repere !== null) {
+    if (typeof corps.repere !== 'string' || corps.repere.trim().length > REPERE_MAX) {
+      throw new ErreurApi(400, `Le repère ne doit pas dépasser ${REPERE_MAX} caractères.`, 'repere');
+    }
+    repere = corps.repere.trim() || null;
+  }
+
+  // Photo de l'étal (facultative) : seulement une adresse de notre compte Cloudinary
+  let photoUrl = null;
+  if (corps.photo_url !== undefined && corps.photo_url !== null && corps.photo_url !== '') {
+    if (!photoAcceptee(corps.photo_url)) {
+      throw new ErreurApi(400, 'La photo doit avoir été envoyée depuis le formulaire de Zando Prix.', 'photo_url');
+    }
+    photoUrl = corps.photo_url;
+  }
+
+  return { ...champs, auteur, constat, repere, photoUrl };
 }
 
 // ---------------------------------------------------------------
@@ -97,23 +129,93 @@ router.post('/', async (req, res) => {
   // Express 5 : req.body vaut undefined quand la requête n'a pas de corps
   const donnees = await validerProposition(req.body ?? {});
 
+  // Clé de suivi : remise une seule fois à la personne qui propose le prix.
+  // On ne garde que son empreinte : même la base ne permet pas de la retrouver.
+  const cleSuivi = randomBytes(24).toString('base64url');
+
   const { rows } = await pool.query(
-    `INSERT INTO propositions (produit_id, marche_id, montant, unite, date_constat, auteur)
-     VALUES ($1, $2, $3, $4, $5, $6)
+    `INSERT INTO propositions
+       (produit_id, marche_id, montant, unite, date_constat, auteur, constat, repere, photo_url, cle_suivi)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
      RETURNING id`,
-    [donnees.produitId, donnees.marcheId, donnees.montant,
-      donnees.unite, donnees.dateConstat, donnees.auteur],
+    [donnees.produitId, donnees.marcheId, donnees.montant, donnees.unite, donnees.dateConstat,
+      donnees.auteur, donnees.constat, donnees.repere, donnees.photoUrl, empreinteCle(cleSuivi)],
   );
 
   res.status(201).json({
     proposition: await lireProposition(pool, rows[0].id),
+    cle_suivi: cleSuivi,
     message: "Merci ! Votre proposition sera vérifiée avant d'être publiée.",
   });
+});
+
+const empreinteCle = (cle) => createHash('sha256').update(String(cle)).digest('hex');
+
+// Suivi privé : la personne qui a proposé le prix, et elle seule (clé),
+// voit où en est sa proposition. Le registre complet reste réservé à l'équipe.
+router.get('/:id/suivi', async (req, res) => {
+  const id = entierPositif(req.params.id);
+  const cle = typeof req.query.cle === 'string' ? req.query.cle : '';
+  // Même réponse que la proposition n'existe pas ou que la clé soit fausse :
+  // on ne révèle pas quels numéros existent.
+  const introuvable = () => new ErreurApi(404, 'Proposition introuvable.');
+  if (id === null || !cle) throw introuvable();
+  const { rows } = await pool.query('SELECT cle_suivi FROM propositions WHERE id = $1', [id]);
+  if (!rows[0]?.cle_suivi || rows[0].cle_suivi !== empreinteCle(cle)) throw introuvable();
+  res.json(await ligneDuRegistre(id));
 });
 
 // ---------------------------------------------------------------
 // Story 8 : suivre les propositions
 // ---------------------------------------------------------------
+// ---------------------------------------------------------------
+// Confirmer une proposition en attente (feature 18, public)
+// Une confirmation est un SIGNAL pour l'équipe : elle ne publie rien.
+// ---------------------------------------------------------------
+const ROLES = ['acheteur', 'commercant', 'visiteur'];
+const COMMENTAIRE_MAX = 300;
+
+router.post('/:id/confirmations', async (req, res) => {
+  const id = entierPositif(req.params.id);
+  if (id === null) throw new ErreurApi(404, 'Proposition introuvable.');
+
+  const corps = req.body ?? {};
+  if (!ROLES.includes(corps.role)) {
+    throw new ErreurApi(400, 'Indiquez votre rôle : acheteur, commerçant ou visiteur.', 'role');
+  }
+  if (typeof corps.conforme !== 'boolean') {
+    throw new ErreurApi(400, 'Indiquez si vous avez constaté ce prix exact.', 'conforme');
+  }
+  const commentaire = typeof corps.commentaire === 'string' ? corps.commentaire.trim() : '';
+  if (commentaire.length > COMMENTAIRE_MAX) {
+    throw new ErreurApi(400, `Le commentaire ne doit pas dépasser ${COMMENTAIRE_MAX} caractères.`, 'commentaire');
+  }
+
+  const { rows } = await pool.query('SELECT statut FROM propositions WHERE id = $1', [id]);
+  if (!rows[0]) throw new ErreurApi(404, 'Proposition introuvable.');
+  if (rows[0].statut !== 'en_attente') {
+    throw new ErreurApi(409, 'Cette proposition a déjà été traitée : elle ne peut plus être confirmée.');
+  }
+
+  // Une seule confirmation par connexion et par proposition. L'empreinte
+  // mélange l'adresse et le numéro de proposition : on ne garde pas l'adresse,
+  // et deux confirmations d'une même personne ne peuvent pas être reliées.
+  const empreinte = createHash('sha256').update(`${req.ip}:${id}`).digest('hex');
+  try {
+    await pool.query(
+      `INSERT INTO confirmations (proposition_id, role, conforme, commentaire, empreinte)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [id, corps.role, corps.conforme, commentaire || null, empreinte],
+    );
+  } catch (erreur) {
+    // 23505 : violation de la contrainte d'unicité (proposition, empreinte)
+    if (erreur.code === '23505') throw new ErreurApi(409, 'Vous avez déjà confirmé cette proposition.');
+    throw erreur;
+  }
+
+  res.status(201).json({ confirmation: 'Merci ! Votre confirmation a été transmise à l\'équipe de vérification.' });
+});
+
 router.get('/', exigerAdmin, async (req, res) => {
   const { statut } = req.query;
   if (statut !== undefined && !STATUTS.includes(statut)) {

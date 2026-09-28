@@ -1,0 +1,393 @@
+<!doctype html>
+<!-- =============================================================
+     public/suivi.html : suivi et transparence des propositions (maquette du PM)
+     Données : GET /api/registre (public, sans auteur ni administrateur).
+     Script : /js/suivi.js
+     ============================================================= -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <!-- Sans cette ligne, un téléphone afficherait la page comme un écran
+       d'ordinateur rétréci, avec un texte minuscule. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Suivi des propositions citoyennes : Zando Prix</title>
+  <meta name="description" content="Registre public des prix proposés par les habitants dans les marchés de Brazzaville : statut, vérification et confirmations.">
+  <meta name="theme-color" content="#15803d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%2315803d'/%3E%3Cpath d='M12 11h16v4L18.5 25H28v4H12v-4l9.5-10H12z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Plus Jakarta Sans : titres et prix. Inter : textes et formulaires. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  <!-- Icônes Material Symbols (maquette du PM). display=block : pendant le
+       chargement, l'icône reste invisible au lieu d'afficher son nom. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add,add_circle,add_location_alt,add_shopping_cart,add_task,analytics,arrow_downward,arrow_forward,arrow_upward,assignment_turned_in,badge,balance,bar_chart,block,bolt,calculate,campaign,cancel,category,check,check_circle,chevron_left,chevron_right,close,compare_arrows,diversity_3,done_all,download,eco,edit,edit_calendar,edit_note,emoji_events,equalizer,expand_more,explore,fact_check,favorite,favorite_border,feed,gavel,grain,grid_view,group_add,groups,handshake,help_outline,history,history_edu,history_toggle_off,home,hourglass_empty,hourglass_top,how_to_reg,info,inventory_2,lightbulb,local_fire_department,location_city,location_on,manage_search,menu,mic,military_tech,new_releases,notification_add,nutrition,open_in_new,pending_actions,person,person_check,print,priority_high,public,query_stats,rate_review,refresh,restart_alt,savings,scale,schedule,search,security,share,shield,shield_with_heart,shopping_bag,shopping_basket,smartphone,sort,speed,store,storefront,straighten,swap_driving_apps_wheel,swap_horiz,sync,table_rows,task_alt,thumb_down,thumb_up,timer,tips_and_updates,trending_down,trending_flat,trending_up,troubleshoot,update,verified,verified_user,visibility,visibility_off,warning,water_drop&display=block">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="module" src="/js/menu.js"></script>
+  <script type="module" src="/js/coquille.js"></script>
+  <!-- type="module" : permet import/export, et le script ne s'exécute qu'une
+       fois le HTML entièrement lu (comme l'attribut defer). -->
+  <script type="module" src="/js/suivi.js"></script>
+</head>
+<body class="page-suivi">
+  <a class="lien-evitement" href="#registre">Aller au registre</a>
+  <header class="bandeau">
+    <div class="entete__barre">
+      <a class="marque" href="/">
+        <span class="marque__carre" aria-hidden="true"><span class="ms" aria-hidden="true">storefront</span></span>
+        <svg class="marque__z" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="currentColor"/><path d="M12 11h16v4L18.5 25H28v4H12v-4l9.5-10H12z" fill="#fff"/></svg>
+        <span class="marque__texte">
+          <span class="marque__ligne"><span class="marque__nom">Zando Prix</span><span class="marque__ville">Brazza</span></span>
+          <span class="marque__slogan">L'observatoire des marchés de Brazzaville</span>
+          <span class="marque__page">Suivi des propositions</span>
+        </span>
+      </a>
+      <nav class="navigation" id="navigation" aria-label="Navigation principale">
+        <ul>
+          <li><a href="/">Accueil &amp; Recherche</a></li>
+          <li><a href="/comparateur.html">Comparateur de prix</a></li>
+          <li><a href="/produit.html">Détail produit</a></li>
+          <li><a href="/suivi.html" aria-current="page">Suivi des propositions</a></li>
+          <li><a href="/fraicheur.html">Guide Fraîcheur &amp; États</a></li>
+        </ul>
+      </nav>
+      <div class="entete__actions">
+        <!-- « Votre marché » : mémorisé dans ce navigateur, rempli par /js/coquille.js -->
+        <label class="choix-marche">
+          <span class="ms" aria-hidden="true">location_on</span>
+          <span class="sr-only">Votre marché</span>
+          <select id="marche-reference"><option value="">Tous les marchés</option></select>
+          <span class="ms choix-marche__fleche" aria-hidden="true">expand_more</span>
+        </label>
+        <a class="bouton-proposer" href="/?proposer=1"><span class="ms" aria-hidden="true">add_circle</span><span class="bouton-proposer__texte">Proposer un prix</span></a>
+        <button type="button" class="entete__rond entete__actualiser" data-actualiser>
+          <span class="ms" aria-hidden="true">sync</span><span class="entete__point" aria-hidden="true"></span><span class="sr-only">Actualiser les prix</span>
+        </button>
+        <a class="entete__profil" href="/admin.html" title="Espace administrateur"><span class="ms" aria-hidden="true">person</span><span class="sr-only">Espace administrateur</span></a>
+        <!-- Menu burger (tablette) : affiché par /js/menu.js -->
+        <button type="button" class="burger" aria-expanded="false" aria-controls="navigation" hidden>
+          <span class="burger__lignes" aria-hidden="true"></span>
+          <span class="sr-only">Menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Bandeau civique -->
+    <div class="bandeau-civique">
+      <div class="conteneur bandeau-civique__interieur">
+        <p class="bandeau-civique__gauche">
+          <span class="point-pulse" aria-hidden="true"></span>
+          <strong>Registre public Zando Prix</strong>
+          <span class="bandeau-civique__sep" aria-hidden="true">/</span>
+          <span id="bandeau-marches">Relevés dans les marchés de Brazzaville</span>
+        </p>
+        <p class="bandeau-civique__droite">
+          <span><span class="ms" aria-hidden="true">verified_user</span> <span id="bandeau-taux">–</span></span>
+          <span class="bandeau-civique__sep" aria-hidden="true">|</span>
+          <span><span class="ms" aria-hidden="true">sync</span> <span id="bandeau-maj">Chargement…</span></span>
+        </p>
+      </div>
+    </div>
+
+    <div class="conteneur suivi">
+      <!-- Fil d'Ariane et en-tête -->
+      <div class="suivi__entete">
+        <nav class="ariane" aria-label="Fil d'Ariane">
+          <a href="/"><span class="ms" aria-hidden="true">home</span> Accueil</a>
+          <span aria-hidden="true">&gt;</span>
+          <a href="/comparateur.html">Observatoire</a>
+          <span aria-hidden="true">&gt;</span>
+          <span aria-current="page">Suivi des propositions citoyennes</span>
+        </nav>
+        <div class="suivi__titre-ligne">
+          <div class="suivi__textes">
+            <p class="pastille-registre"><span class="ms" aria-hidden="true">gavel</span> Registre public &amp; audit ouvert des marchés</p>
+            <h1 class="suivi__titre">Suivi &amp; Transparence des Propositions Citoyennes</h1>
+            <p class="suivi__chapeau">Consultez le statut de vérification des prix proposés par les habitants dans les marchés de Brazzaville. Chaque prix publié a d'abord été vérifié par l'équipe&nbsp;; l'auteur d'une proposition n'est jamais affiché.</p>
+          </div>
+          <div class="suivi__actions">
+            <a class="bouton-blanc" id="telecharger" href="/api/registre.csv" download><span class="ms" aria-hidden="true">download</span> Télécharger le registre (CSV)</a>
+            <a class="bouton-vert" href="/?proposer=1"><span class="ms" aria-hidden="true">add_task</span> + Proposer un nouveau prix</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quatre chiffres clés, calculés sur la base réelle -->
+      <section class="kpis" aria-label="Chiffres clés du registre">
+        <article class="kpi kpi--vert">
+          <div class="kpi__haut">
+            <div>
+              <p class="kpi__libelle">Total relevés ce mois</p>
+              <p class="kpi__valeur" id="kpi-mois">–</p>
+            </div>
+            <span class="kpi__icone"><span class="ms" aria-hidden="true">feed</span></span>
+          </div>
+          <p class="kpi__detail" id="kpi-mois-detail"></p>
+          <span class="kpi__barre" aria-hidden="true"></span>
+        </article>
+        <article class="kpi kpi--vert-vif">
+          <div class="kpi__haut">
+            <div>
+              <p class="kpi__libelle">Validées &amp; actives</p>
+              <p class="kpi__valeur" id="kpi-validees">–</p>
+            </div>
+            <span class="kpi__icone"><span class="ms" aria-hidden="true">verified</span></span>
+          </div>
+          <p class="kpi__detail" id="kpi-validees-detail"></p>
+          <span class="kpi__barre" aria-hidden="true"></span>
+        </article>
+        <article class="kpi kpi--orange">
+          <div class="kpi__haut">
+            <div>
+              <p class="kpi__libelle">En cours d'examen</p>
+              <p class="kpi__valeur" id="kpi-attente">–</p>
+            </div>
+            <span class="kpi__icone"><span class="ms" aria-hidden="true">pending_actions</span></span>
+          </div>
+          <p class="kpi__detail" id="kpi-attente-detail"></p>
+          <span class="kpi__barre" aria-hidden="true"></span>
+        </article>
+        <article class="kpi kpi--sarcelle">
+          <div class="kpi__haut">
+            <div>
+              <p class="kpi__libelle">Écart moyen décelé</p>
+              <p class="kpi__valeur" id="kpi-ecart">–</p>
+            </div>
+            <span class="kpi__icone"><span class="ms" aria-hidden="true">query_stats</span></span>
+          </div>
+          <p class="kpi__detail" id="kpi-ecart-detail"></p>
+          <span class="kpi__barre" aria-hidden="true"></span>
+        </article>
+      </section>
+
+      <!-- Recherche, filtres et onglets de statut -->
+      <section class="filtres-suivi" aria-label="Rechercher et filtrer">
+        <form class="filtres-suivi__ligne" id="filtres-suivi" role="search">
+          <div class="filtres-suivi__recherche">
+            <span class="ms" aria-hidden="true">search</span>
+            <label class="sr-only" for="recherche-suivi">Rechercher dans le registre</label>
+            <input id="recherche-suivi" type="search" placeholder="Rechercher un produit, une référence (#PROP-...) ou un marché..." autocomplete="off">
+          </div>
+          <div class="filtres-suivi__choix">
+            <label class="choix-filtre"><span class="ms" aria-hidden="true">store</span><span class="sr-only">Marché</span>
+              <select id="suivi-marche"><option value="">Tous les marchés (Brazzaville)</option></select></label>
+            <label class="choix-filtre"><span class="ms" aria-hidden="true">category</span><span class="sr-only">Catégorie</span>
+              <select id="suivi-categorie"><option value="">Toutes les catégories</option></select></label>
+            <label class="choix-filtre"><span class="ms" aria-hidden="true">sort</span><span class="sr-only">Trier</span>
+              <select id="suivi-tri">
+                <option value="recent">Plus récents d'abord</option>
+                <option value="prix_croissant">Prix le plus bas</option>
+                <option value="prix_decroissant">Prix le plus élevé</option>
+                <option value="ecart">Écart constaté max</option>
+              </select></label>
+          </div>
+        </form>
+        <div class="filtres-suivi__bas">
+          <div class="onglets-statut" role="group" aria-label="Filtrer par statut">
+            <button type="button" class="onglet-statut" data-statut="" aria-pressed="true">Toutes <span data-compte="total"></span></button>
+            <button type="button" class="onglet-statut" data-statut="validee" aria-pressed="false"><span class="onglet-statut__point onglet-statut__point--vert" aria-hidden="true"></span>Validées <span data-compte="validee"></span></button>
+            <button type="button" class="onglet-statut" data-statut="en_attente" aria-pressed="false"><span class="onglet-statut__point onglet-statut__point--orange" aria-hidden="true"></span>En attente de validation <span data-compte="en_attente"></span></button>
+            <button type="button" class="onglet-statut" data-statut="rejetee" aria-pressed="false"><span class="onglet-statut__point onglet-statut__point--rouge" aria-hidden="true"></span>Rejetées <span data-compte="rejetee"></span></button>
+          </div>
+          <p class="filtres-suivi__compte" role="status" aria-live="polite"><span class="ms" aria-hidden="true">visibility</span> <span id="nombre-affichees"></span></p>
+        </div>
+      </section>
+
+      <!-- Registre -->
+      <section class="registre" id="registre" tabindex="-1" aria-labelledby="titre-registre">
+        <h2 class="sr-only" id="titre-registre">Registre des propositions</h2>
+        <div class="registre__defilement">
+          <table class="registre__tableau">
+            <thead>
+              <tr>
+                <th scope="col">Réf. &amp; Date</th>
+                <th scope="col">Produit &amp; Format</th>
+                <th scope="col">Marché</th>
+                <th scope="col">Prix proposé</th>
+                <th scope="col">Vérification</th>
+                <th scope="col">Statut de modération</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="lignes-registre">
+              <tr><td colspan="7" class="registre__message">Chargement du registre…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="registre__pied">
+          <p id="registre-position"></p>
+          <nav class="pagination" id="pagination" aria-label="Pages du registre"></nav>
+        </div>
+      </section>
+
+      <!-- Protocole de confiance : décrit le fonctionnement RÉEL du site -->
+      <section class="protocole" aria-labelledby="titre-protocole">
+        <div class="protocole__entete">
+          <div>
+            <p class="protocole__surtitre"><span class="ms" aria-hidden="true">shield</span> Garantie d'intégrité citoyenne</p>
+            <h2 class="protocole__titre" id="titre-protocole">Comment une proposition citoyenne devient-elle un prix publié&nbsp;?</h2>
+            <p class="protocole__chapeau">Pour éviter les erreurs d'unité, les fausses rumeurs et la spéculation, chaque prix proposé suit le même parcours en quatre étapes avant d'apparaître dans les prix du jour.</p>
+          </div>
+          <p class="protocole__garantie"><span class="point-vert" aria-hidden="true"></span> Vérification humaine avant publication</p>
+        </div>
+        <ol class="protocole__etapes">
+          <li class="etape-protocole">
+            <div>
+              <div class="etape-protocole__haut">
+                <span class="etape-protocole__numero etape-protocole__numero--vert">1</span>
+                <span class="etape-protocole__icone etape-protocole__icone--vert"><span class="ms" aria-hidden="true">smartphone</span></span>
+              </div>
+              <h3 class="etape-protocole__titre">Dépôt instantané</h3>
+              <p class="etape-protocole__texte">Un habitant saisit le prix vu sur l'étal : produit, marché, prix, unité et date. Sans inscription.</p>
+            </div>
+            <p class="etape-protocole__pied etape-protocole__pied--vert"><span class="ms" aria-hidden="true">check</span> Proposition en moins de 30 secondes</p>
+          </li>
+          <li class="etape-protocole">
+            <div>
+              <div class="etape-protocole__haut">
+                <span class="etape-protocole__numero etape-protocole__numero--orange">2</span>
+                <span class="etape-protocole__icone etape-protocole__icone--orange"><span class="ms" aria-hidden="true">troubleshoot</span></span>
+              </div>
+              <h3 class="etape-protocole__titre">Comparaison automatique</h3>
+              <p class="etape-protocole__texte">Le prix proposé est comparé au prix affiché pour le même produit dans le même marché. Un écart important est signalé à l'équipe.</p>
+            </div>
+            <p class="etape-protocole__pied etape-protocole__pied--orange"><span class="ms" aria-hidden="true">security</span> Écart calculé pour chaque proposition</p>
+          </li>
+          <li class="etape-protocole">
+            <div>
+              <div class="etape-protocole__haut">
+                <span class="etape-protocole__numero etape-protocole__numero--sarcelle">3</span>
+                <span class="etape-protocole__icone etape-protocole__icone--sarcelle"><span class="ms" aria-hidden="true">group_add</span></span>
+              </div>
+              <h3 class="etape-protocole__titre">Confirmations des habitants</h3>
+              <p class="etape-protocole__texte">Les personnes présentes au marché peuvent confirmer le prix, ou signaler un écart. Chaque confirmation aide l'équipe à décider.</p>
+            </div>
+            <p class="etape-protocole__pied etape-protocole__pied--sarcelle"><span class="ms" aria-hidden="true">groups</span> Confirmations visibles dans ce registre</p>
+          </li>
+          <li class="etape-protocole">
+            <div>
+              <div class="etape-protocole__haut">
+                <span class="etape-protocole__numero etape-protocole__numero--vert-vif">4</span>
+                <span class="etape-protocole__icone etape-protocole__icone--vert-vif"><span class="ms" aria-hidden="true">campaign</span></span>
+              </div>
+              <h3 class="etape-protocole__titre">Publication</h3>
+              <p class="etape-protocole__texte">Après vérification par l'équipe, le prix rejoint les prix du jour et met à jour l'étiquette « Meilleur prix » du produit.</p>
+            </div>
+            <p class="etape-protocole__pied etape-protocole__pied--vert-vif"><span class="ms" aria-hidden="true">public</span> Donnée publique et datée</p>
+          </li>
+        </ol>
+        <div class="appel-vigie">
+          <div class="appel-vigie__texte">
+            <span class="appel-vigie__icone"><span class="ms" aria-hidden="true">badge</span></span>
+            <div>
+              <h3 class="appel-vigie__titre">Vous fréquentez chaque jour un marché de Brazzaville&nbsp;?</h3>
+              <p class="appel-vigie__chapeau">Proposez les prix que vous voyez et confirmez ceux des autres&nbsp;: vous participez à l'audit citoyen des prix.</p>
+            </div>
+          </div>
+          <a class="bouton-vert" href="/?proposer=1">Proposer un prix</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Fenêtre « Confirmer ce prix citoyen » (maquette) -->
+  <dialog class="fenetre-confirmer" id="fenetre-confirmer" aria-labelledby="titre-confirmer">
+    <form class="fenetre-confirmer__contenu" id="formulaire-confirmer" method="dialog" novalidate>
+      <div class="fenetre-confirmer__entete">
+        <h2 class="fenetre-confirmer__titre" id="titre-confirmer"><span class="ms" aria-hidden="true">verified</span> Confirmer ce prix citoyen</h2>
+        <button type="button" class="fenetre-confirmer__fermer" data-fermer><span class="ms" aria-hidden="true">close</span><span class="sr-only">Fermer</span></button>
+      </div>
+      <div class="fenetre-confirmer__cible">
+        <p class="fenetre-confirmer__libelle">Produit ciblé</p>
+        <p class="fenetre-confirmer__produit" id="confirmer-produit"></p>
+        <p class="fenetre-confirmer__prix" id="confirmer-prix"></p>
+      </div>
+      <p class="alerte" id="confirmer-erreur" role="alert" hidden></p>
+      <div class="fenetre-confirmer__champ">
+        <label for="confirmer-role">Votre rôle de vérification</label>
+        <select id="confirmer-role" name="role">
+          <option value="acheteur">Consommatrice / acheteuse sur place aujourd'hui</option>
+          <option value="visiteur">Habitante ou habitant de passage au marché</option>
+          <option value="commercant">Commerçante / déléguée de halle</option>
+        </select>
+      </div>
+      <fieldset class="fenetre-confirmer__champ">
+        <legend>Avez-vous constaté ce prix exact&nbsp;?</legend>
+        <div class="fenetre-confirmer__choix">
+          <label><input type="radio" name="conforme" value="oui" checked> <span>Oui, prix identique</span></label>
+          <label><input type="radio" name="conforme" value="non"> <span>Non, écart constaté</span></label>
+        </div>
+      </fieldset>
+      <div class="fenetre-confirmer__champ">
+        <label for="confirmer-commentaire">Commentaire ou précision de pesée (optionnel)</label>
+        <textarea id="confirmer-commentaire" name="commentaire" rows="2" maxlength="300" placeholder="Ex. : pesé à 980 g, tas de 5 pièces bien mûres…"></textarea>
+      </div>
+      <div class="fenetre-confirmer__actions">
+        <button type="button" class="fenetre-confirmer__annuler" data-fermer>Annuler</button>
+        <button type="submit" class="fenetre-confirmer__valider"><span class="ms" aria-hidden="true">how_to_reg</span> Envoyer ma confirmation</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Message de remerciement (maquette : « Merci citoyen ! ») -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span class="toast__icone"><span class="ms" aria-hidden="true">check</span></span>
+    <div>
+      <p class="toast__titre">Merci !</p>
+      <p class="toast__texte" id="toast-texte"></p>
+    </div>
+  </div>
+
+  <footer class="pied">
+    <div class="pied__contenu">
+      <div class="pied__marque">
+        <a class="pied__logo" href="/"><span class="marque__carre marque__carre--petit" aria-hidden="true"><span class="ms" aria-hidden="true">storefront</span></span>Zando Prix</a>
+        <p>Transparence des prix du panier de la ménagère brazzavilloise. Un observatoire citoyen et neutre au service de votre pouvoir d'achat.</p>
+        <p class="pied__verifie"><span class="ms" aria-hidden="true">verified</span> Données citoyennes vérifiées</p>
+      </div>
+
+      <nav class="pied__colonne" aria-labelledby="pied-marches">
+        <h2 class="pied__titre" id="pied-marches">Marchés de Brazzaville</h2>
+        <!-- Rempli par /js/coquille.js depuis l'API : la liste suit la base -->
+        <ul id="pied-liste-marches"></ul>
+      </nav>
+
+      <nav class="pied__colonne" aria-labelledby="pied-outils">
+        <h2 class="pied__titre" id="pied-outils">Observatoire &amp; Outils</h2>
+        <ul>
+          <li><a href="/">Recherche par vivres frais</a></li>
+          <li><a href="/comparateur.html">Indice du panier de la ménagère</a></li>
+          <li><a href="/fraicheur.html">Normes de calibrage &amp; tas</a></li>
+          <li><a href="/suivi.html">Audit citoyen des relevés</a></li>
+        </ul>
+      </nav>
+
+      <div class="pied__colonne">
+        <h2 class="pied__titre">Fiabilité &amp; Fraîcheur</h2>
+        <div class="pied__encart">
+          <p class="pied__encart-titre"><span class="ms" aria-hidden="true">schedule</span> Fraîcheur des cotations</p>
+          <p>Toutes les cotations de plus de 7 jours sont signalées, pour être réactualisées par les visiteurs des marchés.</p>
+        </div>
+        <p class="pied__pastille"><span class="ms" aria-hidden="true">eco</span> Prix relevés à Brazzaville</p>
+      </div>
+    </div>
+    <div class="pied__bas">
+      <p>© 2026 Zando Prix — Plateforme civique et libre des marchés de Brazzaville.</p>
+      <ul>
+        <li><a href="/a-propos.html">À propos</a></li>
+        <li><a href="/contact.html">Contact presse &amp; collectifs</a></li>
+        <li><a href="/admin.html">Espace administrateur</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <nav class="barre-mobile" aria-label="Navigation rapide">
+    <a class="barre-mobile__lien" href="/"><span class="ms" aria-hidden="true">storefront</span><span>Accueil</span></a>
+    <a class="barre-mobile__lien" href="/comparateur.html"><span class="ms" aria-hidden="true">balance</span><span>Comparer</span></a>
+    <a class="barre-mobile__lien barre-mobile__proposer" href="/?proposer=1"><span class="barre-mobile__rond" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span><span>Proposer</span></a>
+    <a class="barre-mobile__lien" href="/suivi.html" aria-current="page"><span class="ms" aria-hidden="true">fact_check</span><span>Suivi</span></a>
+    <a class="barre-mobile__lien" href="/fraicheur.html"><span class="ms" aria-hidden="true">eco</span><span>Fraîcheur</span></a>
+  </nav>
+</body>
+</html>

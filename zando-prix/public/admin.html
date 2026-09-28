@@ -1,0 +1,315 @@
+<!doctype html>
+<!-- =============================================================
+     public/admin.html : tableau de bord de l'espace administrateur
+     Deux vues dans la même page : Propositions (#propositions) et
+     Messages (#messages), choisies depuis la barre latérale.
+     La page est publique (fichier statique), mais vide sans l'API :
+     les données ne sont renvoyées qu'à un administrateur connecté.
+     Script : /js/admin.js
+     ============================================================= -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administration : Zando Prix</title>
+  <!-- Demande aux moteurs de recherche de ne pas référencer cette page -->
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%2315803d'/%3E%3Cpath d='M12 11h16v4L18.5 25H28v4H12v-4l9.5-10H12z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Plus Jakarta Sans : titres et prix. Inter : textes et formulaires. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="module" src="/js/admin.js"></script>
+</head>
+<body class="corps-admin">
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <div class="tableau-de-bord">
+    <!-- Barre latérale : identité, état de connexion, navigation -->
+    <aside class="barre-laterale" aria-label="Espace administrateur">
+      <a class="marque marque--claire" href="/">
+        <svg class="marque__logo" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="currentColor"/><path d="M12 11h16v4L18.5 25H28v4H12v-4l9.5-10H12z" fill="#fff"/></svg>
+        <span class="marque__texte"><span class="marque__nom">Zando Prix</span></span>
+      </a>
+      <p class="barre-laterale__espace">Espace administrateur</p>
+
+      <!-- État de connexion : pastille verte + nom, rempli par le script.
+           La couleur n'est jamais seule : le mot « Connecté » l'accompagne. -->
+      <div class="etat-connexion" id="etat-connexion" hidden>
+        <span class="etat-connexion__pastille" aria-hidden="true"></span>
+        <div class="etat-connexion__texte">
+          <span class="etat-connexion__libelle">Connecté</span>
+          <span class="etat-connexion__nom" id="session-nom"></span>
+          <span class="etat-connexion__email" id="session-email"></span>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Sections">
+        <ul>
+          <li>
+            <a class="menu__lien" href="#propositions" data-vue="propositions">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+              <span>Propositions</span>
+              <span class="menu__compteur" id="compteur-propositions" hidden></span>
+            </a>
+          </li>
+          <li>
+            <a class="menu__lien" href="#messages" data-vue="messages">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z M4 7l8 6 8-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+              <span>Messages</span>
+              <span class="menu__compteur" id="compteur-messages" hidden></span>
+            </a>
+          </li>
+          <li>
+            <a class="menu__lien" href="#administrateurs" data-vue="administrateurs">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.2.6 3.5 2.8 3.5 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+              <span>Administrateurs</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="barre-laterale__bas">
+        <a class="barre-laterale__lien" href="/">← Voir le site</a>
+        <button type="button" class="bouton bouton--sombre bouton--compact" id="deconnexion">Se déconnecter</button>
+      </div>
+    </aside>
+
+    <!-- Masqué jusqu'à ce que la connexion soit confirmée par l'API -->
+    <main class="espace" id="contenu" tabindex="-1" hidden>
+
+      <!-- ===================== Vue Propositions ===================== -->
+      <section class="vue" id="vue-propositions" aria-labelledby="titre-propositions">
+        <header class="espace__entete">
+          <h1 class="espace__titre" id="titre-propositions">Propositions reçues</h1>
+          <p class="espace__aide">
+            Corrigez, publiez ou supprimez les prix proposés par les utilisateurs.
+            Une proposition publiée devient le prix affiché ; une proposition supprimée reste dans l'historique.
+          </p>
+        </header>
+
+        <!-- Chiffres clés : chaque carte ouvre l'onglet correspondant -->
+        <div class="indicateurs">
+          <button type="button" class="indicateur indicateur--attente" data-aller="en_attente">
+            <span class="indicateur__nombre" id="nombre-en_attente">–</span>
+            <span class="indicateur__libelle">En attente</span>
+          </button>
+          <button type="button" class="indicateur indicateur--publiee" data-aller="validee">
+            <span class="indicateur__nombre" id="nombre-validee">–</span>
+            <span class="indicateur__libelle">Publiées</span>
+          </button>
+          <button type="button" class="indicateur indicateur--rejetee" data-aller="rejetee">
+            <span class="indicateur__nombre" id="nombre-rejetee">–</span>
+            <span class="indicateur__libelle">Rejetées</span>
+          </button>
+          <a class="indicateur indicateur--messages" href="#messages">
+            <span class="indicateur__nombre" id="nombre-messages">–</span>
+            <span class="indicateur__libelle">Messages non lus</span>
+          </a>
+        </div>
+
+        <div class="carte">
+      <div class="onglets" role="group" aria-label="Afficher les propositions">
+        <button type="button" class="onglet" data-statut="en_attente" aria-pressed="true">En attente <span class="compteur"></span></button>
+        <button type="button" class="onglet" data-statut="validee" aria-pressed="false">Publiées <span class="compteur"></span></button>
+        <button type="button" class="onglet" data-statut="rejetee" aria-pressed="false">Rejetées <span class="compteur"></span></button>
+        <button type="button" class="onglet" data-statut="" aria-pressed="false">Toutes <span class="compteur"></span></button>
+      </div>
+
+      <!-- Messages de confirmation (« Proposition publiée… »), annoncés aux lecteurs d'écran -->
+      <p class="annonce" id="annonce" role="status" aria-live="polite" tabindex="-1"></p>
+
+      <div class="tableau-conteneur" id="conteneur-tableau">
+        <table class="tableau">
+          <caption class="sr-only">Propositions de prix</caption>
+          <thead>
+            <tr>
+              <th scope="col">Reçue le</th>
+              <th scope="col">Produit</th>
+              <th scope="col">Marché</th>
+              <th scope="col" class="nombre">Prix proposé</th>
+              <th scope="col">Vu le</th>
+              <th scope="col">Par</th>
+              <th scope="col">Statut</th>
+              <th scope="col"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="lignes"></tbody>
+        </table>
+      </div>
+      <p class="vide vide--simple" id="aucune" hidden></p>
+        </div>
+      </section>
+
+      <!-- ===================== Vue Messages ===================== -->
+      <section class="vue" id="vue-messages" aria-labelledby="titre-messages" hidden>
+        <header class="espace__entete">
+          <h1 class="espace__titre" id="titre-messages">Messages</h1>
+          <p class="espace__aide">
+            Messages envoyés depuis la page Contact. Les messages non lus apparaissent en premier.
+            Pour répondre, utilisez votre messagerie : le bouton « Répondre » l'ouvre avec l'adresse remplie.
+          </p>
+        </header>
+
+        <p class="annonce" id="annonce-messages" role="status" aria-live="polite" tabindex="-1"></p>
+        <ul class="messages" id="liste-messages"></ul>
+        <p class="vide vide--simple" id="aucun-message" hidden>Aucun message reçu pour l'instant.</p>
+      </section>
+
+      <!-- ===================== Vue Administrateurs (feature 16) ===================== -->
+      <section class="vue" id="vue-administrateurs" aria-labelledby="titre-administrateurs" hidden>
+        <header class="espace__entete">
+          <h1 class="espace__titre" id="titre-administrateurs">Administrateurs</h1>
+          <p class="espace__aide">
+            Les comptes de l'équipe. Tous les administrateurs ont les mêmes droits.
+            Un compte n'est jamais supprimé : désactivé, il ne peut plus se connecter,
+            mais ce qu'il a publié reste attribué à son nom.
+          </p>
+        </header>
+
+        <p class="annonce" id="annonce-comptes" role="status" aria-live="polite" tabindex="-1"></p>
+
+        <div class="carte">
+          <div class="tableau-conteneur">
+            <table class="tableau tableau--comptes">
+              <caption class="sr-only">Comptes administrateurs</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Nom</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Statut</th>
+                  <th scope="col">Dernière connexion</th>
+                  <th scope="col"><span class="sr-only">Action</span></th>
+                </tr>
+              </thead>
+              <tbody id="lignes-comptes"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="formulaires-comptes">
+          <!-- Ajouter un compte -->
+          <section class="carte" aria-labelledby="titre-nouveau-compte">
+            <h2 class="carte__titre" id="titre-nouveau-compte">Ajouter un administrateur</h2>
+            <form class="formulaire" id="formulaire-compte" novalidate>
+              <p class="alerte" id="compte-erreur" role="alert" hidden></p>
+              <div class="champ">
+                <label for="n-nom">Nom</label>
+                <input id="n-nom" name="nom" type="text" maxlength="100" autocomplete="off" aria-describedby="n-erreur-nom">
+                <p class="erreur" id="n-erreur-nom" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="n-email">E-mail</label>
+                <input id="n-email" name="email" type="email" maxlength="254" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="n-erreur-email">
+                <p class="erreur" id="n-erreur-email" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="n-mdp">Mot de passe provisoire</label>
+                <div class="champ__groupe">
+                  <!-- type="text" : l'administrateur doit pouvoir le lire pour le transmettre -->
+                  <input id="n-mdp" name="mot_de_passe" type="text" maxlength="128" autocomplete="new-password" spellcheck="false" aria-describedby="n-aide-mdp n-erreur-mot_de_passe">
+                  <button type="button" class="bouton bouton--secondaire bouton--compact" id="generer-mdp">Générer</button>
+                </div>
+                <p class="aide" id="n-aide-mdp">12 caractères au moins. Transmettez-le par un moyen sûr : la personne pourra le changer depuis cette page.</p>
+                <p class="erreur" id="n-erreur-mot_de_passe" hidden></p>
+              </div>
+              <div><button type="submit" class="bouton bouton--principal">Créer le compte</button></div>
+            </form>
+          </section>
+
+          <!-- Changer son propre mot de passe -->
+          <section class="carte" aria-labelledby="titre-mon-mdp">
+            <h2 class="carte__titre" id="titre-mon-mdp">Changer mon mot de passe</h2>
+            <form class="formulaire" id="formulaire-mdp" novalidate>
+              <p class="alerte" id="mdp-erreur" role="alert" hidden></p>
+              <div class="champ">
+                <label for="m-actuel">Mot de passe actuel</label>
+                <input id="m-actuel" name="actuel" type="password" autocomplete="current-password" maxlength="128" aria-describedby="m-erreur-actuel">
+                <p class="erreur" id="m-erreur-actuel" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="m-nouveau">Nouveau mot de passe</label>
+                <input id="m-nouveau" name="nouveau" type="password" autocomplete="new-password" maxlength="128" aria-describedby="m-aide-nouveau m-erreur-nouveau">
+                <p class="aide" id="m-aide-nouveau">12 caractères au moins. Vos autres sessions ouvertes seront fermées.</p>
+                <p class="erreur" id="m-erreur-nouveau" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="m-confirmation">Confirmez le nouveau mot de passe</label>
+                <input id="m-confirmation" name="confirmation" type="password" autocomplete="new-password" maxlength="128" aria-describedby="m-erreur-confirmation">
+                <p class="erreur" id="m-erreur-confirmation" hidden></p>
+              </div>
+              <div><button type="submit" class="bouton bouton--principal">Changer le mot de passe</button></div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Corriger une proposition avant publication -->
+  <dialog class="dialogue" id="correction" aria-labelledby="correction-titre">
+    <div class="dialogue__contenu">
+      <div>
+        <h2 class="dialogue__titre" id="correction-titre">Corriger la proposition</h2>
+        <p class="dialogue__aide" id="correction-aide"></p>
+      </div>
+
+      <form class="formulaire" novalidate>
+        <p class="alerte" id="correction-erreur" role="alert" hidden></p>
+
+        <div class="champ">
+          <label for="c-produit">Produit</label>
+          <select id="c-produit" name="produit_id" aria-describedby="c-erreur-produit_id"></select>
+          <p class="erreur" id="c-erreur-produit_id" hidden></p>
+        </div>
+
+        <div class="champ">
+          <label for="c-marche">Marché</label>
+          <select id="c-marche" name="marche_id" aria-describedby="c-erreur-marche_id"></select>
+          <p class="erreur" id="c-erreur-marche_id" hidden></p>
+        </div>
+
+        <div class="formulaire__ligne">
+          <div class="champ">
+            <label for="c-montant">Prix en FCFA</label>
+            <input id="c-montant" name="montant" type="text" inputmode="numeric" autocomplete="off" aria-describedby="c-erreur-montant">
+            <p class="erreur" id="c-erreur-montant" hidden></p>
+          </div>
+          <div class="champ">
+            <label for="c-unite">Vendu</label>
+            <select id="c-unite" name="unite" aria-describedby="c-erreur-unite"></select>
+            <p class="erreur" id="c-erreur-unite" hidden></p>
+          </div>
+        </div>
+
+        <div class="champ">
+          <label for="c-date">Date où le prix a été vu</label>
+          <input id="c-date" name="date_constat" type="date" aria-describedby="c-erreur-date_constat">
+          <p class="erreur" id="c-erreur-date_constat" hidden></p>
+        </div>
+
+        <div class="dialogue__actions">
+          <button type="button" class="bouton bouton--secondaire" data-fermer>Annuler</button>
+          <button type="submit" class="bouton bouton--principal">Enregistrer la correction</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Confirmer une suppression -->
+  <dialog class="dialogue dialogue--etroit" id="suppression" aria-labelledby="suppression-titre" aria-describedby="suppression-aide">
+    <div class="dialogue__contenu">
+      <div>
+        <h2 class="dialogue__titre" id="suppression-titre">Supprimer cette proposition ?</h2>
+        <p class="dialogue__aide" id="suppression-aide"></p>
+      </div>
+      <p class="alerte" id="suppression-erreur" role="alert" hidden></p>
+      <div class="dialogue__actions">
+        <button type="button" class="bouton bouton--secondaire" data-fermer>Annuler</button>
+        <button type="button" class="bouton bouton--rejeter" id="suppression-confirmer">Supprimer</button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

@@ -49,3 +49,8 @@ services:
         sync: false
       - key: ADMIN_MOT_DE_PASSE
         sync: false
+      # Photos de preuve (facultatif) : adresse donnée par le tableau de bord
+      # Cloudinary, de la forme cloudinary://CLE:SECRET@NOM_DU_COMPTE.
+      # Sans elle, le formulaire n'affiche simplement pas la photo.
+      - key: CLOUDINARY_URL
+        sync: false

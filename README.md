@@ -2,7 +2,7 @@
 
 Comparateur de prix des produits de base entre plusieurs marchés : où acheter moins cher aujourd'hui, avec la date de chaque relevé.
 
-**Stack :** HTML, CSS et JavaScript côté front ; Node.js, Express 5 et PostgreSQL côté back ; spécifications en Gherkin, testées avec Cucumber JS et Supertest ; déploiement sur Render (service web Node.js et base PostgreSQL). Icônes Font Awesome et graphiques Chart.js chargés depuis cdnjs.
+**Stack :** HTML, CSS et JavaScript côté front ; Node.js, Express 5 et PostgreSQL côté back ; spécifications en Gherkin, testées avec Cucumber JS et Supertest ; déploiement sur Render (service web Node.js et base PostgreSQL). Icônes Font Awesome chargées depuis cdnjs. Interface conforme à la maquette du PM (système « Marché moderne » : Plus Jakarta Sans et Inter, vert émeraude et ambre).
 
 ## Démarrage rapide
 
@@ -69,7 +69,8 @@ Les scénarios tagués `@a-valider` reposent sur des choix pris pendant le sprin
 - un prix dans une autre unité que l'unité de référence est affiché mais exclu de la comparaison (RM05) ;
 - le meilleur prix se calcule sur tous les marchés, même quand un marché est filtré ;
 - la recherche ignore les accents ;
-- hors cadrage : filtre par catégorie, photos des produits et carrousel de l'accueil ;
+- hors cadrage : filtre par catégorie, photos des produits ;
+- tendance de la semaine : comparaison avec le prix en vigueur 7 jours plus tôt, « stabilité » sous 2 % de variation ;
 - pages À propos et Contact : textes provisoires, formulaire de contact limité à 5 messages par heure et par connexion ;
 - espace administrateur : session de 8 heures, blocage de 15 minutes après 5 échecs de connexion, auteur d'une proposition non modifiable, valeur d'origine non conservée après une correction.
 
@@ -81,23 +82,55 @@ Les scénarios tagués `@a-valider` reposent sur des choix pris pendant le sprin
 
 ## Photos
 
-Les photos des produits et du carrousel restent à fournir. Emplacements, formats et droits d'utilisation : [docs/photos-produits.md](docs/photos-produits.md).
 
 ## Déploiement
 
 Sur Render, avec `render.yaml` : voir la partie 4 du [guide de mise en place](docs/guide-mise-en-place.md). Au premier démarrage sur une base vide, le serveur crée les tables, les données de démonstration et le premier compte administrateur (`src/amorcage.js`).
 
+## Pages
+
+| Page | Contenu |
+|---|---|
+| `/` | Maquette « Accueil & Recherche » : recherche, filtres et tri, prix du jour, tendance de la semaine (`GET /api/tendance`), baromètre de fraîcheur. Sur téléphone : votre marché, panier type, prix du jour en direct |
+| `/comparateur.html?produit=1,3&vue=cartes` | Maquette « Comparateur » : jusqu'à 4 produits, catégorie, marchés comparés, tableau ou cartes, graphique des écarts, recherche vocale en français si le navigateur la propose. Sur téléphone : meilleur tarif, écart des prix, une carte par marché, partage WhatsApp / SMS |
+| `/produit.html?id=…` | Maquette « Détail produit » : prix moyen, écart de marché, stabilité sur 30 jours, une carte par marché, jauge autour de la moyenne, derniers relevés (`GET /api/produits/:id/historique`). Sur téléphone : synthèse, relevés par marché, partage et favoris |
+| `/fraicheur.html` | Maquette « Guide Fraîcheur & Étalonnage » : les 3 règles réellement appliquées, les unités traditionnelles relevées (tas, pièce, botte, sac) avec les prix observés, un simulateur de prix au kilo comparé aux prix de Brazzaville, et une fiche mémo imprimable |
+| `/confirmation.html?id=…&cle=…` | Récapitulatif d'une proposition envoyée. La clé est remise à l'envoi : seule la personne qui a proposé le prix peut suivre le sien |
+| `/officiels.html` | Prix officiels du Ministère du Commerce (plafonds et prix indicatifs, saisis par l'équipe dans le back-office) comparés aux prix des étals |
+| `/export.html` | Maquette « Export & Impression du Registre » : période, marché, publiées seulement ; aperçu A4 portrait ou paysage imprimable en PDF, colonnes au choix, empreinte SHA-256 ; CSV, Excel (SheetJS depuis cdnjs, chargé au clic) ; données ouvertes |
+| `/suivi.html`, `/export.html` | **Réservées à l'équipe** (décision du PM), ouvertes depuis le back-office : registre de toutes les propositions, export CSV et impression. Sans connexion, renvoi vers la page de connexion ; pages non indexées |
+| `/a-propos.html`, `/contact.html` | Présentation du site, formulaire de contact |
+| `/admin.html` | Maquette « Back-office de modération » : file des propositions en cartes (prix proposé comparé au prix affiché, écart, confirmations, type de constatation et repère), publication, correction, rejet, validation groupée, taux d'approbation, garde-fous d'affichage ; messages et comptes administrateurs |
+
+Les écarts et prix moyens sont calculés dans le navigateur (`public/js/statistiques.js`) à partir de `/api/prix` : aucune donnée n'est inventée. Les jauges des écarts sont en HTML et CSS, sans bibliothèque de graphiques.
+
+## Évolutions de la base (migrations)
+
+`db/schema.sql` décrit la base complète, pour une installation neuve. Une base déjà en service (celle de Render) ne peut pas être recréée sans perdre ses données : chaque évolution est donc aussi écrite dans `db/migrations/` (`001_confirmations.sql`…). Au démarrage, le serveur applique les migrations qui manquent et les note dans la table `schema_migrations` (`src/migrations.js`). Il suffit de pousser le code : la base en ligne se met à jour toute seule, sans rien effacer.
+
 ## Bibliothèques chargées depuis cdnjs
 
 - **Font Awesome 6** : icônes, purement décoratives. La feuille est chargée sans bloquer l'affichage ; sans elle, le texte suffit.
-- **Chart.js 4** : graphique de comparaison des prix d'un produit. Téléchargé seulement au premier clic sur un bouton « graphique » ; si le CDN ne répond pas, un message l'explique et les prix restent affichés.
 
 `npm run cdn:integrite` calcule l'empreinte SRI de chaque fichier et l'écrit dans les pages : le navigateur refusera un fichier modifié sur le CDN. À lancer une fois (connexion Internet nécessaire), puis après chaque changement de version.
 
 ## Illustrations
 
-Les 24 produits et les 4 diapositives du carrousel ont des illustrations vectorielles (`public/images/**/*.svg`), légères et nettes sur tous les écrans. Pour les remplacer par des photos, voir [docs/photos-produits.md](docs/photos-produits.md).
+Les 24 produits ont des illustrations vectorielles (`public/images/produits/*.svg`), légères et nettes sur tous les écrans. Pour les remplacer par des photos, voir [docs/photos-produits.md](docs/photos-produits.md).
 
 ## Auteur
 
 **Giovani MOUKOKO**, développeur fullstack, Akieniacademy.
+
+## Photos de preuve (Cloudinary)
+
+Le formulaire « Proposer un prix » peut joindre une photo de l'étal. Elle est réduite et recompressée dans le téléphone (ce qui retire la position GPS et les autres informations cachées), puis envoyée directement chez Cloudinary avec une autorisation signée par le serveur (`GET /api/photos/signature`). Seule l'équipe la voit, dans la file de modération.
+
+Pour l'activer :
+
+1. créer un compte gratuit sur cloudinary.com, au nom du projet ;
+2. dans le tableau de bord, copier la valeur « API Environment variable » (`cloudinary://…`) ;
+3. l'ajouter comme variable `CLOUDINARY_URL` dans l'onglet *Environment* du service Render (et dans `.env` en local).
+
+Sans cette variable, la fonction photo est simplement masquée.
+

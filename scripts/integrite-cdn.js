@@ -3,7 +3,7 @@
 //
 // Usage : npm run cdn:integrite   (nécessite une connexion Internet)
 //
-// Le site charge Font Awesome et Chart.js depuis cdnjs. L'attribut
+// Le site charge Font Awesome depuis cdnjs. L'attribut
 // « integrity » (Subresource Integrity) contient l'empreinte SHA-384 du
 // fichier attendu : si le fichier servi par le CDN a été modifié, même d'un
 // octet, le navigateur le refuse au lieu de l'exécuter.
@@ -18,7 +18,8 @@ import { readdir, readFile, writeFile } from 'node:fs/promises';
 const FICHIERS_HTML = (await readdir('public'))
   .filter((nom) => nom.endsWith('.html'))
   .map((nom) => `public/${nom}`);
-const FICHIERS_JS = ['public/js/graphique.js'];
+// Scripts qui chargent eux-mêmes un fichier cdnjs (aucun pour l'instant)
+const FICHIERS_JS = ['public/js/export.js'];
 
 const empreintes = new Map();
 
