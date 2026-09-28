@@ -41,12 +41,12 @@ INSERT INTO produits (nom, categorie, unite_reference, image) VALUES
   ('Piment',             'Légumes',          'tas',   '/images/produits/piment.webp'),
   ('Gombo',              'Légumes',          'tas',   '/images/produits/gombo.webp'),
   ('Arachide',           'Légumineuses',     'kg',    '/images/produits/arachide.webp'),
-  ('Haricots',           'Légumineuses',     'kg',    '/images/produits/haricots.webp'),
+  ('Haricots',           'Légumineuses',     'kg',    '/images/produits/haricot.webp'),
   ('Huile végétale',     'Huiles',           'litre', '/images/produits/huile-vegetale.webp'),
   ('Poisson fumé',       'Poissons',         'kg',    '/images/produits/poisson-fume.webp'),
   ('Chinchard (mpiodi)', 'Poissons',         'kg',    '/images/produits/chinchard.webp'),
   ('Poulet',             'Viandes et œufs',  'piece', '/images/produits/poulet.webp'),
-  ('Œufs',               'Viandes et œufs',  'piece', '/images/produits/oeufs.webp'),
+  ('Œufs',               'Viandes et œufs',  'piece', '/images/produits/oeuf.webp'),
   ('Sucre',              'Épicerie',         'kg',    '/images/produits/sucre.webp'),
   ('Sel',                'Épicerie',         'kg',    '/images/produits/sel.webp');
 
