@@ -13,8 +13,8 @@ const barre = document.querySelector('.entete__barre');
 const bouton = document.querySelector('.burger');
 const navigation = document.querySelector('#navigation');
 
-// Même seuil que dans styles.css (@media (max-width: 48rem))
-const petitEcran = window.matchMedia('(max-width: 48rem)');
+// Même seuil que dans styles.css (@media (max-width: 79.99rem))
+const petitEcran = window.matchMedia('(max-width: 79.99rem)');
 
 if (barre && bouton && navigation) {
   // Ce seul attribut active les règles CSS du menu déroulant

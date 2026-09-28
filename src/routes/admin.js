@@ -12,8 +12,12 @@
 import { Router } from 'express';
 import { pool } from '../db.js';
 import { ErreurApi } from '../erreurs.js';
-import { LONGUEUR_MAX, verifier, verifierLeurre } from '../motdepasse.js';
-import { exigerAdmin, fermerSession, ouvrirSession } from '../session.js';
+import {
+  LONGUEUR_MAX, hacher, problemeMotDePasse, verifier, verifierLeurre,
+} from '../motdepasse.js';
+import {
+  exigerAdmin, fermerSession, fermerSessionsDe, ouvrirSession,
+} from '../session.js';
 
 const router = Router();
 
@@ -102,6 +106,34 @@ router.post('/deconnexion', async (req, res) => {
 
 router.get('/moi', exigerAdmin, (req, res) => {
   res.json({ administrateur: req.administrateur });
+});
+
+// Changer son propre mot de passe (feature 16).
+// L'ancien mot de passe est exigé : une session laissée ouverte sur un
+// ordinateur partagé ne suffit pas à s'emparer du compte.
+router.put('/mot-de-passe', exigerAdmin, async (req, res) => {
+  const { actuel, nouveau } = req.body ?? {};
+
+  const { rows } = await pool.query(
+    'SELECT mot_de_passe_hash FROM administrateurs WHERE id = $1',
+    [req.administrateur.id],
+  );
+  const bon = typeof actuel === 'string' && actuel.length <= LONGUEUR_MAX
+    && await verifier(actuel, rows[0].mot_de_passe_hash);
+  if (!bon) throw new ErreurApi(400, 'Le mot de passe actuel est incorrect.', 'actuel');
+
+  const probleme = problemeMotDePasse(nouveau);
+  if (probleme) throw new ErreurApi(400, probleme, 'nouveau');
+
+  await pool.query(
+    'UPDATE administrateurs SET mot_de_passe_hash = $2 WHERE id = $1',
+    [req.administrateur.id, await hacher(nouveau)],
+  );
+  // L'ancien mot de passe a peut-être fuité : on ferme les autres sessions
+  // de ce compte, mais pas celle de la personne qui vient de le changer.
+  await fermerSessionsDe(req.administrateur.id, req);
+
+  res.json({ confirmation: 'Votre mot de passe a été changé. Vos autres sessions ont été fermées.' });
 });
 
 export default router;

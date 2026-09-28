@@ -19,7 +19,11 @@ const router = Router();
 router.get('/', async (req, res) => {
   // On choisit les colonnes explicitement plutôt que SELECT * :
   // une colonne ajoutée plus tard à la table ne sera pas exposée par accident.
-  const { rows } = await pool.query('SELECT id, nom, ville FROM marches ORDER BY nom');
+  // latitude et longitude servent à proposer le marché le plus proche
+  // (en-tête mobile) ; elles peuvent être vides. ::float : nombre JSON, pas texte.
+  const { rows } = await pool.query(
+    'SELECT id, nom, ville, latitude::float AS latitude, longitude::float AS longitude FROM marches ORDER BY nom',
+  );
   // res.json() convertit le tableau en JSON et ajoute l'en-tête
   // Content-Type: application/json. Statut 200 par défaut.
   res.json(rows);

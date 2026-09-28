@@ -6,10 +6,11 @@
 // prix non disponible) est fait par la vue SQL v_grille_prix (schema.sql).
 // Cette route ne fait que valider les filtres et interroger la vue.
 // =============================================================
+import { createHash } from 'node:crypto';
 import { Router } from 'express';
 import { existe, pool } from '../db.js';
 import { ErreurApi } from '../erreurs.js';
-import { idOptionnel, texteOptionnel } from '../validation.js';
+import { entierPositif, idOptionnel, texteOptionnel } from '../validation.js';
 
 const router = Router();
 
@@ -64,14 +65,66 @@ router.get('/', async (req, res) => {
   const { rows } = await pool.query(
     `SELECT produit_id, produit, categorie, marche_id, marche, disponible,
             prix_id, montant, unite, date_releve, source,
-            fraicheur, comparable, est_meilleur_prix
-     FROM v_grille_prix
+            fraicheur, comparable, est_meilleur_prix,
+            -- Réponses des visiteurs au bouton « Confirmer » (feature 22)
+            (SELECT COUNT(*)::int FROM confirmations_prix c WHERE c.prix_id = v.prix_id AND c.conforme)     AS confirmations,
+            (SELECT COUNT(*)::int FROM confirmations_prix c WHERE c.prix_id = v.prix_id AND NOT c.conforme) AS signalements
+     FROM v_grille_prix v
      ${where}
      ORDER BY produit, marche`,
     valeurs,
   );
 
   res.json(rows);
+});
+
+// ---------------------------------------------------------------
+// POST /api/prix/:id/confirmations : « ce prix est-il toujours le bon ? »
+// (feature 22, public). Un SIGNAL pour l'équipe : rien n'est modifié.
+// ---------------------------------------------------------------
+router.post('/:id/confirmations', async (req, res) => {
+  const id = entierPositif(req.params.id);
+  if (id === null) throw new ErreurApi(404, 'Prix introuvable.');
+  const conforme = req.body?.conforme;
+  if (typeof conforme !== 'boolean') {
+    throw new ErreurApi(400, 'Indiquez si le prix est toujours le même.', 'conforme');
+  }
+
+  // Seul le prix affiché (le dernier relevé du couple produit/marché) se confirme
+  const { rows } = await pool.query(
+    `SELECT p.id, (v.prix_id IS NOT NULL) AS actuel
+     FROM prix p
+     LEFT JOIN v_prix_actuels v ON v.prix_id = p.id
+     WHERE p.id = $1`,
+    [id],
+  );
+  if (!rows[0]) throw new ErreurApi(404, 'Prix introuvable.');
+  if (!rows[0].actuel) throw new ErreurApi(409, 'Ce prix a déjà été remplacé par un relevé plus récent.');
+
+  // Une réponse par connexion et par prix ; l'adresse n'est pas conservée
+  const empreinte = createHash('sha256').update(`prix:${req.ip}:${id}`).digest('hex');
+  try {
+    await pool.query(
+      'INSERT INTO confirmations_prix (prix_id, conforme, empreinte) VALUES ($1, $2, $3)',
+      [id, conforme, empreinte],
+    );
+  } catch (erreur) {
+    if (erreur.code === '23505') throw new ErreurApi(409, 'Vous avez déjà répondu pour ce prix.');
+    throw erreur;
+  }
+
+  const { rows: totaux } = await pool.query(
+    `SELECT COUNT(*) FILTER (WHERE conforme)::int AS confirmations,
+            COUNT(*) FILTER (WHERE NOT conforme)::int AS signalements
+     FROM confirmations_prix WHERE prix_id = $1`,
+    [id],
+  );
+  res.status(201).json({
+    ...totaux[0],
+    message: conforme
+      ? 'Merci ! Votre confirmation renforce la fiabilité de ce prix.'
+      : "Merci ! L'équipe est prévenue que ce prix a changé. Vous pouvez proposer le nouveau prix.",
+  });
 });
 
 export default router;

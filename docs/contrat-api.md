@@ -195,6 +195,63 @@ La réponse est `200` avec `{ "proposition": {...} }`.
 | 404 | proposition inexistante |
 | 409 | proposition déjà publiée ou supprimée |
 
+## Historique d'un produit
+
+### `GET /api/produits/:id/historique`
+
+Feature 19 (fiche produit). Réponse `200` :
+
+```json
+{
+  "releves": [
+    { "date_releve": "2026-09-24", "montant": 1020, "unite": "kg", "source": "officiel",
+      "marche_id": 1, "marche": "Marché Total", "comparable": true }
+  ],
+  "stabilite": { "disponible": true, "jours": 30, "fluctuation": 2, "niveau": "tres_stable", "marches": 1 }
+}
+```
+
+`releves` : les 10 derniers prix publiés, tous marchés confondus, sans aucun nom de personne. `stabilite` : moyenne, marché par marché, de l'écart entre le prix en vigueur aujourd'hui et celui d'il y a 30 jours (unité de référence) ; `niveau` vaut `tres_stable` (< 2,5 %), `stable` (< 7 %), `variable` (< 15 %) ou `instable`. Sans prix vieux d'au moins 30 jours : `{ "disponible": false, "jours": 30 }`. `404` avec `champ: "produit_id"` si le produit n'existe pas.
+
+## Tendance et registre public
+
+### `GET /api/tendance`
+
+Feature 17. Compare, pour chaque produit et chaque marché, le prix en vigueur aujourd'hui avec celui en vigueur 7 jours plus tôt, dans l'unité de référence seulement.
+
+```json
+{ "disponible": true, "jours": 7, "variation": -1.2, "sens": "stabilite",
+  "categorie": { "nom": "Légumes", "variation": -4 },
+  "categories": [ … ], "serie": [100, 99.5, …, 98.8] }
+```
+
+`sens` vaut `baisse`, `hausse` ou `stabilite` (moins de 2 % de variation). `serie` : un indice base 100 par jour, du plus ancien à aujourd'hui. Sans relevé datant d'au moins 7 jours : `{ "disponible": false }`.
+
+### `GET /api/registre`
+
+Feature 18, page « Suivi des propositions ». Public. **Ne contient jamais l'auteur d'une proposition ni l'administrateur qui l'a traitée.**
+
+Filtres facultatifs : `statut` (`en_attente`, `validee`, `rejetee`), `marche_id`, `categorie`, `q` (produit, marché ou référence), `tri` (`recent`, `prix_croissant`, `prix_decroissant`, `ecart`), `page` (25 propositions par page).
+
+Chaque proposition : `reference` (`#PROP-0042`), `recue_le`, `date_constat`, `produit`, `marche`, `montant`, `unite`, `statut`, `traitee_le`, `prix_affiche` (prix en vigueur à la date constatée, ou `null`), `ecart`, `confirmations` (`total`, `identiques`). La réponse contient aussi `compteurs` (par statut, pour les onglets) et `statistiques` (propositions du mois et du mois précédent, taux d'admission, délai moyen de traitement, écart moyen).
+
+### `GET /api/registre.csv`
+
+Les mêmes filtres, sans pagination. Fichier CSV (séparateur `;`, UTF-8 avec BOM pour Excel), sans aucune donnée personnelle.
+
+### `POST /api/propositions/:id/confirmations`
+
+Public. Corps : `{ "role": "acheteur" | "commercant" | "visiteur", "conforme": true | false, "commentaire": "…" }` (commentaire facultatif, 300 caractères au plus). Une confirmation est un signal pour l'équipe : elle ne publie rien.
+
+| Code | Cas |
+|---|---|
+| 201 | Confirmation enregistrée |
+| 400 | `role`, `conforme` ou `commentaire` invalide |
+| 404 | Proposition inexistante |
+| 409 | Proposition déjà traitée, ou déjà confirmée depuis cette connexion |
+
+L'adresse IP n'est pas stockée : seule une empreinte (adresse + numéro de proposition) l'est, pour empêcher les doublons. L'espace administrateur voit le nombre de confirmations de chaque proposition (`confirmations`, `confirmations_identiques`).
+
 ## Messages
 
 Feature 14 (hors cadrage, `@a-valider`) : formulaire de la page Contact.
@@ -254,3 +311,111 @@ Ferme la session en base et efface le cookie. Répond `204`, même sans session.
 ### 🔒 `GET /api/admin/moi`
 
 `200` avec `{ "administrateur": { "id", "nom", "email" } }`. Utilisée par les pages pour savoir si l'on est connecté.
+
+### 🔒 `PUT /api/admin/mot-de-passe`
+
+Feature 16 : changer son propre mot de passe. Corps : `{ "actuel": "...", "nouveau": "..." }`.
+
+Réponse `200` : `{ "confirmation": "..." }`. Les autres sessions du compte sont fermées, pas celle qui a fait la demande. `400` avec `champ` = `actuel` (mot de passe actuel faux) ou `nouveau` (moins de 12 caractères).
+
+## Comptes administrateurs
+
+Feature 16. Toutes les routes sont 🔒, et tous les administrateurs ont les mêmes droits. Un compte n'est jamais supprimé, seulement désactivé.
+
+### 🔒 `GET /api/administrateurs`
+
+```json
+[
+  {
+    "id": 1, "nom": "Grâce Mabiala", "email": "grace@zandoprix.cg", "actif": true,
+    "created_at": "2026-09-24T08:02:00.000Z",
+    "derniere_connexion": "2026-09-25T07:40:00.000Z", "moi": true
+  }
+]
+```
+
+`moi` vaut `true` pour le compte de la personne connectée. `derniere_connexion` est lue dans le journal des tentatives de connexion, purgé après 30 jours : elle vaut `null` au-delà.
+
+### 🔒 `POST /api/administrateurs`
+
+Corps : `{ "nom": "Awa Ngoma", "email": "awa@zandoprix.cg", "mot_de_passe": "..." }`. Réponse `201` : `{ "administrateur": {...} }`.
+
+| Code | Cas |
+|---|---|
+| 400 | `champ` = `nom`, `email` ou `mot_de_passe` (moins de 12 caractères) |
+| 409 | `champ` = `email` : un compte existe déjà avec cet e-mail, sans tenir compte des majuscules |
+
+### 🔒 `PATCH /api/administrateurs/:id`
+
+Corps : `{ "actif": false }` pour désactiver, `{ "actif": true }` pour réactiver. Désactiver ferme immédiatement toutes les sessions du compte. Réponse `200` : `{ "administrateur": {...} }`.
+
+| Code | Cas |
+|---|---|
+| 400 | `actif` n'est pas un booléen |
+| 404 | compte inexistant |
+| 409 | tentative de désactiver son propre compte |
+
+## Précisions d'une proposition et page de confirmation (feature 20)
+
+`POST /api/propositions` accepte deux champs facultatifs de plus :
+
+| Champ | Type | Règle |
+|---|---|---|
+| `constat` | texte | `direct` (relevé sur l'étal), `ticket` ou `pesee` ; sinon `400` avec `champ: "constat"` |
+| `repere` | texte | 120 caractères au plus ; sinon `400` avec `champ: "repere"`. Réservé à l'équipe : jamais renvoyé par le registre public |
+
+Les deux champs sont renvoyés par `GET /api/propositions` (administrateurs seulement). Migration : `db/migrations/002_details_proposition.sql`.
+
+### `GET /api/registre/:id`
+
+Une proposition du registre public, au même format qu'une ligne de `GET /api/registre` (référence, produit, marché, prix, statut, prix affiché, écart, confirmations), sans auteur ni repère. `404` si elle n'existe pas. Utilisée par la page `/confirmation.html?id=…`.
+
+## Export du registre (feature 21)
+
+`GET /api/registre` et `GET /api/registre.csv` acceptent aussi :
+
+| Paramètre | Règle |
+|---|---|
+| `depuis` | Date `AAAA-MM-JJ` : seulement les prix constatés depuis cette date. Sinon `400` avec `champ: "depuis"` |
+| `tout=1` | (JSON seulement) toutes les lignes d'un coup, dans la limite de 5 000, au lieu de pages de 25 |
+
+Chaque ligne du registre indique désormais `constat` (type de constatation) ; le CSV a une colonne `constat`. Le repère et l'auteur ne sont jamais publics. Page : `/export.html`.
+
+## Confirmer un prix affiché (feature 22)
+
+### `POST /api/prix/:id/confirmations`
+
+Public. Corps : `{ "conforme": true }` (le prix est toujours le même) ou `{ "conforme": false }` (il a changé). `:id` est le `prix_id` d'une ligne de `GET /api/prix`.
+
+| Réponse | Cas |
+|---|---|
+| `201` | `{ "confirmations": 1, "signalements": 0, "message": "…" }` |
+| `400` | `conforme` absent ou pas un booléen (`champ: "conforme"`) |
+| `404` | Prix inconnu |
+| `409` | Prix déjà remplacé par un relevé plus récent, ou réponse déjà donnée depuis cette connexion |
+
+Une réponse par connexion et par prix (empreinte SHA-256 de l'adresse et du numéro ; l'adresse n'est pas gardée). Le prix n'est jamais modifié automatiquement. `GET /api/prix` renvoie désormais `confirmations` et `signalements` pour chaque ligne. Migration : `db/migrations/003_confirmations_prix.sql`.
+
+## Registre réservé à l'équipe (décision du PM)
+
+`GET /api/registre`, `GET /api/registre/:id` et `GET /api/registre.csv` exigent une session d'administrateur (`401` sinon).
+
+### `GET /api/propositions/:id/suivi?cle=…`
+
+Suivi privé d'une proposition par la personne qui l'a envoyée. `POST /api/propositions` renvoie une `cle_suivi` (une seule fois ; la base n'en garde que l'empreinte). Réponse : une ligne au format du registre. `404` si la proposition n'existe pas **ou** si la clé est fausse (on ne révèle pas quels numéros existent).
+
+## Prix officiels du Ministère du Commerce (feature 23)
+
+| Méthode et adresse | Accès | Rôle |
+|---|---|---|
+| `GET /api/prix-officiels` | public | prix en vigueur : un par produit et par type (`plafond` ou `indicatif`), date d'effet la plus récente déjà atteinte |
+| `GET /api/prix-officiels/tous` | équipe | tout l'historique, avec `saisi_par` et `retire_le` |
+| `POST /api/prix-officiels` | équipe | `produit_id`, `type`, `montant`, `unite`, `date_effet`, `reference` (texte officiel, 3 à 200 caractères) ; `201` |
+| `DELETE /api/prix-officiels/:id` | équipe | retire le prix (jamais effacé) ; `204`, `404` s'il est déjà retiré |
+
+Migration : `db/migrations/004_prix_officiels.sql`.
+
+## Photo de l'étal (feature 24)
+
+`GET /api/photos/signature` : `{ "disponible": false }` si `CLOUDINARY_URL` n'est pas configurée ; sinon `{ disponible, compte, cle, dossier, timestamp, signature }` (SHA-1 de `folder=…&timestamp=…` suivi du secret). `POST /api/propositions` accepte `photo_url`, seulement si elle commence par `https://res.cloudinary.com/<compte>/image/upload/` (`400` avec `champ: "photo_url"` sinon). Migration : `db/migrations/005_suivi_et_photo.sql`.
+

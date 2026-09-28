@@ -35,6 +35,7 @@ class ZandoWorld extends World {
     this.propositionCourante = null;
     this.motsDePasse = new Map(); // e-mail -> mot de passe des administrateurs créés
     this.navigateur = null;
+    this.autresAppareils = new Map(); // e-mail -> navigateur connecté ailleurs
   }
 
   // Comme un navigateur : garde le cookie de session d'une requête à l'autre,
@@ -45,6 +46,13 @@ class ZandoWorld extends World {
   }
 
   // Oublie les cookies : comme un nouveau navigateur, jamais connecté
+  // Un autre navigateur, avec ses propres cookies : sert à simuler une
+  // deuxième personne ou un deuxième appareil, sans toucher à la session
+  // du scénario (feature 16)
+  nouvelAppareil() {
+    return request.agent(contexte.app);
+  }
+
   oublierCookies() {
     this.navigateur = null;
   }

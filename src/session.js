@@ -74,6 +74,17 @@ export async function fermerSession(req, res) {
   res.clearCookie(NOM_COOKIE, optionsCookie());
 }
 
+// Ferme toutes les sessions d'un compte (désactivation, changement de mot de
+// passe). Si « reqAGarder » est fourni, la session de cette requête est
+// conservée : on ne déconnecte pas la personne qui vient de faire l'action.
+export async function fermerSessionsDe(administrateurId, reqAGarder) {
+  const jeton = reqAGarder ? lireCookie(reqAGarder, NOM_COOKIE) : undefined;
+  await pool.query(
+    'DELETE FROM sessions WHERE administrateur_id = $1 AND jeton_hash IS DISTINCT FROM $2',
+    [administrateurId, jeton ? empreinte(jeton) : null],
+  );
+}
+
 // Administrateur connecté, ou null. Un compte désactivé perd l'accès
 // immédiatement, même si sa session n'a pas encore expiré.
 async function administrateurConnecte(req) {

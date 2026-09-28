@@ -2,8 +2,8 @@
 // Routes /api/messages : page Contact (feature 14, hors cadrage)
 //
 // POST /api/messages          public : un visiteur envoie un message
-// GET  /api/messages          : liste pour l'espace administrateur
-// PATCH /api/messages/:id     : marquer comme lu ou non lu
+// GET  /api/messages          🔒 : liste pour l'espace administrateur
+// PATCH /api/messages/:id     🔒 : marquer comme lu ou non lu
 //
 // Une route publique qui écrit en base attire les robots. Deux protections
 // simples, sans service extérieur ni CAPTCHA :

@@ -14,10 +14,14 @@
   <title>Administration : Zando Prix</title>
   <!-- Demande aux moteurs de recherche de ne pas référencer cette page -->
   <meta name="robots" content="noindex">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z' fill='%231d7447'/%3E%3Ccircle cx='8' cy='8' r='1.8' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%2315803d'/%3E%3Cpath d='M12 11h16v4L18.5 25H28v4H12v-4l9.5-10H12z' fill='%23fff'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <!-- Plus Jakarta Sans : titres et prix. Inter : textes et formulaires. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  <!-- Icônes Material Symbols (maquette du PM). display=block : pendant le
+       chargement, l'icône reste invisible au lieu d'afficher son nom. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add,add_a_photo,add_circle,add_location_alt,add_shopping_cart,add_task,analytics,archive,arrow_back,arrow_downward,arrow_forward,arrow_upward,assignment_turned_in,assured_workload,backspace,badge,balance,bar_chart,block,bolt,calculate,calendar_month,campaign,cancel,category,check,check_circle,chevron_left,chevron_right,close,code,compare_arrows,content_copy,crisis_alert,crop_landscape,crop_portrait,csv,delete,description,diversity_3,done_all,donut_large,download,eco,edit,edit_calendar,edit_note,emoji_events,equalizer,event,expand_more,explore,fact_check,favorite,favorite_border,feed,fingerprint,folder_zip,fullscreen,gavel,grain,grid_view,group,group_add,groups,handshake,help_outline,history,history_edu,history_toggle_off,home,hourglass_empty,hourglass_top,how_to_reg,info,inventory_2,lightbulb,local_fire_department,location_city,location_on,lock,logout,mail,manage_search,menu,mic,military_tech,new_releases,notification_add,nutrition,open_in_new,pending_actions,person,person_check,photo_camera,picture_as_pdf,playlist_add_check,print,priority_high,public,query_stats,rate_review,receipt_long,refresh,remove,restart_alt,rule,savings,scale,schedule,search,security,send,share,shield,shield_with_heart,shopping_bag,shopping_basket,smartphone,sort,speed,store,storefront,straighten,swap_driving_apps_wheel,swap_horiz,sync,table_rows,table_view,task_alt,terminal,thumb_down,thumb_up,timeline,timer,tips_and_updates,trending_down,trending_flat,trending_up,troubleshoot,tune,unfold_more,update,verified,verified_user,view_column,visibility,visibility_off,warning,water_drop&display=block">
   <link rel="stylesheet" href="/css/styles.css">
   <script type="module" src="/js/admin.js"></script>
 </head>
@@ -26,13 +30,11 @@
 
   <div class="tableau-de-bord">
     <!-- Barre latérale : identité, état de connexion, navigation -->
-    <aside class="barre-laterale" aria-label="Espace administrateur">
-      <a class="marque marque--claire" href="/">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.6V4a1 1 0 0 1 1-1h8.6a1 1 0 0 1 .7.3l7.4 7.4a1 1 0 0 1 0 1.4l-8.6 8.6a1 1 0 0 1-1.4 0l-7.4-7.4a1 1 0 0 1-.3-.7Z" fill="currentColor"/><circle cx="8" cy="8" r="1.8" fill="#fff"/></svg>
-        Zando Prix
+    <aside class="barre-laterale barre-supervision" aria-label="Espace administrateur">
+      <a class="supervision__marque" href="/">
+        <span class="supervision__logo"><span class="ms" aria-hidden="true">verified</span></span>
+        <span><span class="supervision__nom">Supervision</span><span class="supervision__sous">Zando Prix • Brazzaville</span></span>
       </a>
-      <p class="barre-laterale__espace">Espace administrateur</p>
-
       <!-- État de connexion : pastille verte + nom, rempli par le script.
            La couleur n'est jamais seule : le mot « Connecté » l'accompagne. -->
       <div class="etat-connexion" id="etat-connexion" hidden>
@@ -43,29 +45,24 @@
           <span class="etat-connexion__email" id="session-email"></span>
         </div>
       </div>
-
       <nav class="menu" aria-label="Sections">
         <ul>
-          <li>
-            <a class="menu__lien" href="#propositions" data-vue="propositions">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-              <span>Propositions</span>
-              <span class="menu__compteur" id="compteur-propositions" hidden></span>
-            </a>
-          </li>
-          <li>
-            <a class="menu__lien" href="#messages" data-vue="messages">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z M4 7l8 6 8-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
-              <span>Messages</span>
-              <span class="menu__compteur" id="compteur-messages" hidden></span>
-            </a>
-          </li>
+          <li><a class="menu__lien" href="#propositions" data-vue="propositions"><span class="ms" aria-hidden="true">rule</span><span>File de modération</span><span class="menu__compteur" id="compteur-propositions" hidden></span></a></li>
+          <li><a class="menu__lien" href="#messages" data-vue="messages"><span class="ms" aria-hidden="true">mail</span><span>Messages</span><span class="menu__compteur" id="compteur-messages" hidden></span></a></li>
+          <li><a class="menu__lien" href="#officiels" data-vue="officiels"><span class="ms" aria-hidden="true">gavel</span><span>Prix officiels</span></a></li>
+          <li><a class="menu__lien" href="#administrateurs" data-vue="administrateurs"><span class="ms" aria-hidden="true">group</span><span>Administrateurs</span></a></li>
+          <!-- Pages réservées à l'équipe (décision du PM) -->
+          <li><a class="menu__lien" href="/suivi.html"><span class="ms" aria-hidden="true">fact_check</span><span>Registre des propositions</span></a></li>
+          <li><a class="menu__lien" href="/export.html"><span class="ms" aria-hidden="true">download</span><span>Export du registre</span></a></li>
+          <li><a class="menu__lien" href="/"><span class="ms" aria-hidden="true">public</span><span>Vue publique citoyenne</span></a></li>
         </ul>
       </nav>
-
+      <div class="flux-actif" id="flux-actif" hidden>
+        <p class="flux-actif__titre"><span class="point-pulse" aria-hidden="true"></span> Flux actif</p>
+        <p class="flux-actif__texte" id="flux-texte"></p>
+      </div>
       <div class="barre-laterale__bas">
-        <a class="barre-laterale__lien" href="/">← Voir le site</a>
-        <button type="button" class="bouton bouton--sombre bouton--compact" id="deconnexion">Se déconnecter</button>
+        <button type="button" class="bouton-deconnexion" id="deconnexion"><span class="ms" aria-hidden="true">logout</span> Se déconnecter</button>
       </div>
     </aside>
 
@@ -74,64 +71,190 @@
 
       <!-- ===================== Vue Propositions ===================== -->
       <section class="vue" id="vue-propositions" aria-labelledby="titre-propositions">
-        <header class="espace__entete">
-          <h1 class="espace__titre" id="titre-propositions">Propositions reçues</h1>
-          <p class="espace__aide">
-            Corrigez, publiez ou supprimez les prix proposés par les utilisateurs.
-            Une proposition publiée devient le prix affiché ; une proposition supprimée reste dans l'historique.
-          </p>
+        <header class="entete-supervision">
+          <p class="entete-supervision__titre"><svg class="marque__z" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="currentColor"/><path d="M12 11h16v4L18.5 25H28v4H12v-4l9.5-10H12z" fill="#fff"/></svg> Back-office — Observatoire vivrier</p>
+          <span class="entete-supervision__session"><span class="ms" aria-hidden="true">shield_with_heart</span> Session administrateur</span>
         </header>
 
+        <div class="bandeau-moderation">
+          <div class="bandeau-moderation__gauche">
+            <span class="bandeau-moderation__icone"><span class="ms" aria-hidden="true">gavel</span></span>
+            <div>
+              <p class="bandeau-moderation__ligne"><span class="bandeau-moderation__titre" id="titre-propositions">Centre de modération des cotations citoyennes</span> <span class="pastille-session">Session active</span></p>
+              <p class="bandeau-moderation__texte">Vérifiez les prix proposés par les habitants, comparez-les aux prix affichés, puis publiez, corrigez ou rejetez.</p>
+            </div>
+          </div>
+          <div class="bandeau-moderation__delai">
+            <span class="ms texte-sarcelle" aria-hidden="true">timer</span>
+            <div>
+              <p class="bandeau-moderation__libelle">Délai moyen de traitement</p>
+              <p class="bandeau-moderation__valeur" id="delai-moyen">–</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Chiffres clés : chaque carte ouvre l'onglet correspondant -->
-        <div class="indicateurs">
-          <button type="button" class="indicateur indicateur--attente" data-aller="en_attente">
-            <span class="indicateur__nombre" id="nombre-en_attente">–</span>
-            <span class="indicateur__libelle">En attente</span>
+        <div class="indicateurs indicateurs-moderation">
+          <button type="button" class="indicateur-m" data-aller="en_attente">
+            <span><span class="indicateur-m__libelle">En attente de vérification</span><span class="indicateur-m__nombre" id="nombre-en_attente">–</span><span class="indicateur-m__detail texte-orange" id="detail-attente"></span></span>
+            <span class="indicateur-m__icone"><span class="ms" aria-hidden="true">pending_actions</span></span>
           </button>
-          <button type="button" class="indicateur indicateur--publiee" data-aller="validee">
-            <span class="indicateur__nombre" id="nombre-validee">–</span>
-            <span class="indicateur__libelle">Publiées</span>
+          <button type="button" class="indicateur-m" data-aller="validee">
+            <span><span class="indicateur-m__libelle">Publiées</span><span class="indicateur-m__nombre" id="nombre-validee">–</span><span class="indicateur-m__detail texte-vert" id="detail-publiees"></span></span>
+            <span class="indicateur-m__icone"><span class="ms" aria-hidden="true">verified_user</span></span>
           </button>
-          <button type="button" class="indicateur indicateur--rejetee" data-aller="rejetee">
-            <span class="indicateur__nombre" id="nombre-rejetee">–</span>
-            <span class="indicateur__libelle">Rejetées</span>
+          <button type="button" class="indicateur-m" data-aller="rejetee">
+            <span><span class="indicateur-m__libelle">Rejetées</span><span class="indicateur-m__nombre" id="nombre-rejetee">–</span><span class="indicateur-m__detail texte-orange" id="detail-rejetees"></span></span>
+            <span class="indicateur-m__icone indicateur-m__icone--rouge"><span class="ms" aria-hidden="true">crisis_alert</span></span>
           </button>
-          <a class="indicateur indicateur--messages" href="#messages">
-            <span class="indicateur__nombre" id="nombre-messages">–</span>
-            <span class="indicateur__libelle">Messages non lus</span>
+          <a class="indicateur-m" href="#messages">
+            <span><span class="indicateur-m__libelle">Messages non lus</span><span class="indicateur-m__nombre" id="nombre-messages">–</span><span class="indicateur-m__detail">Page Contact</span></span>
+            <span class="indicateur-m__icone"><span class="ms" aria-hidden="true">mail</span></span>
           </a>
         </div>
 
-        <div class="carte">
-      <div class="onglets" role="group" aria-label="Afficher les propositions">
-        <button type="button" class="onglet" data-statut="en_attente" aria-pressed="true">En attente <span class="compteur"></span></button>
-        <button type="button" class="onglet" data-statut="validee" aria-pressed="false">Publiées <span class="compteur"></span></button>
-        <button type="button" class="onglet" data-statut="rejetee" aria-pressed="false">Rejetées <span class="compteur"></span></button>
-        <button type="button" class="onglet" data-statut="" aria-pressed="false">Toutes <span class="compteur"></span></button>
-      </div>
+        <div class="moderation">
+          <div class="moderation__file">
+            <!-- Outils : recherche, filtres, actualisation, validation groupée -->
+            <div class="outils-moderation">
+              <label class="outils-moderation__recherche"><span class="ms" aria-hidden="true">search</span><span class="sr-only">Rechercher</span><input id="filtre-texte" type="search" placeholder="Produit, marché, référence…"></label>
+              <label class="outils-moderation__select"><span class="sr-only">Marché</span><select id="filtre-marche-admin"><option value="">Tous les marchés</option></select></label>
+              <label class="outils-moderation__select"><span class="sr-only">Niveau d'écart</span><select id="filtre-ecart">
+                <option value="">Tous les niveaux d'écart</option>
+                <option value="conforme">Écart de 10 % au plus</option>
+                <option value="ecart">Écart de plus de 10 %</option>
+                <option value="anormal">Écart de plus de 50 %</option>
+                <option value="sans">Sans prix affiché à comparer</option>
+              </select></label>
+              <button type="button" class="outils-moderation__bouton" id="rafraichir"><span class="ms" aria-hidden="true">sync</span> Rafraîchir <span class="petit">(auto : 30 s)</span></button>
+              <button type="button" class="outils-moderation__groupe" id="validation-groupee" disabled><span class="ms" aria-hidden="true">playlist_add_check</span> Validation groupée (<span id="nombre-selection">0</span>)</button>
+            </div>
 
-      <!-- Messages de confirmation (« Proposition publiée… »), annoncés aux lecteurs d'écran -->
-      <p class="annonce" id="annonce" role="status" aria-live="polite" tabindex="-1"></p>
+            <div class="onglets" role="group" aria-label="Afficher les propositions">
+              <button type="button" class="onglet" data-statut="en_attente" aria-pressed="true">En attente <span class="compteur"></span></button>
+              <button type="button" class="onglet" data-statut="validee" aria-pressed="false">Publiées <span class="compteur"></span></button>
+              <button type="button" class="onglet" data-statut="rejetee" aria-pressed="false">Rejetées <span class="compteur"></span></button>
+              <button type="button" class="onglet" data-statut="" aria-pressed="false">Toutes <span class="compteur"></span></button>
+            </div>
+            <!-- Messages de confirmation (« Proposition publiée… »), annoncés aux lecteurs d'écran -->
+            <p class="annonce" id="annonce" role="status" aria-live="polite" tabindex="-1"></p>
+            <div class="file-cartes" id="conteneur-tableau">
+              <div class="file-cartes__liste" id="lignes"></div>
+            </div>
+            <p class="vide vide--simple" id="aucune" hidden></p>
+          </div>
 
-      <div class="tableau-conteneur" id="conteneur-tableau">
-        <table class="tableau">
-          <caption class="sr-only">Propositions de prix</caption>
-          <thead>
-            <tr>
-              <th scope="col">Reçue le</th>
-              <th scope="col">Produit</th>
-              <th scope="col">Marché</th>
-              <th scope="col" class="nombre">Prix proposé</th>
-              <th scope="col">Vu le</th>
-              <th scope="col">Par</th>
-              <th scope="col">Statut</th>
-              <th scope="col"><span class="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody id="lignes"></tbody>
-        </table>
-      </div>
-      <p class="vide vide--simple" id="aucune" hidden></p>
+          <!-- Colonne de droite -->
+          <aside class="moderation__cote" aria-label="Indicateurs et règles">
+            <section class="panneau">
+              <div class="panneau__haut"><h2 class="panneau__titre">Taux d'approbation</h2><span class="panneau__pastille">30 derniers jours</span></div>
+              <div class="approbation">
+                <div class="approbation__anneau" id="anneau-approbation" style="--taux: 0">
+                  <span class="approbation__valeur" id="taux-approbation">–</span>
+                  <span class="approbation__libelle">admises</span>
+                </div>
+                <ul class="approbation__parts">
+                  <li><span class="point-legende point-legende--vert"></span> Publiées telles quelles <strong id="part-directes">–</strong></li>
+                  <li><span class="point-legende point-legende--sarcelle"></span> Corrigées puis publiées <strong id="part-corrigees">–</strong></li>
+                  <li><span class="point-legende point-legende--rouge"></span> Rejetées <strong id="part-rejetees">–</strong></li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="panneau">
+              <div class="panneau__haut"><h2 class="panneau__titre">Bases de référence</h2></div>
+              <div class="reference-base">
+                <span class="reference-base__icone"><span class="ms" aria-hidden="true">balance</span></span>
+                <div>
+                  <p class="reference-base__nom">Prix affichés Zando Prix <span class="reference-base__etat reference-base__etat--vert">À jour</span></p>
+                  <p class="reference-base__texte" id="ref-prix"></p>
+                </div>
+              </div>
+              <div class="reference-base">
+                <span class="reference-base__icone"><span class="ms" aria-hidden="true">assured_workload</span></span>
+                <div>
+                  <p class="reference-base__nom">Ministère du Commerce <span class="reference-base__etat" id="ref-ministere-etat">À saisir</span></p>
+                  <p class="reference-base__texte" id="ref-ministere">Aucun prix officiel saisi pour le moment. <a href="#officiels">Saisir un prix officiel</a></p>
+                </div>
+              </div>
+            </section>
+
+            <section class="panneau">
+              <h2 class="panneau__titre"><span class="ms texte-vert" aria-hidden="true">security</span> Garde-fous automatisés</h2>
+              <p class="panneau__texte">Signalements affichés sur les propositions avant votre décision (rien n'est rejeté automatiquement)&nbsp;:</p>
+              <label class="garde-fou"><span><span class="garde-fou__titre">Signaler un écart de plus de 50 %</span><span class="garde-fou__texte">Repère les saisies aberrantes</span></span><input type="checkbox" class="interrupteur" data-garde-fou="ecart" checked></label>
+              <label class="garde-fou"><span><span class="garde-fou__titre">Signaler une autre unité</span><span class="garde-fou__texte">Le prix n'est pas dans l'unité de référence</span></span><input type="checkbox" class="interrupteur" data-garde-fou="unite" checked></label>
+              <label class="garde-fou"><span><span class="garde-fou__titre">Signaler un relevé de 7 jours ou plus</span><span class="garde-fou__texte">Le prix a pu changer depuis</span></span><input type="checkbox" class="interrupteur" data-garde-fou="date" checked></label>
+            </section>
+
+            <section class="panneau panneau--vert">
+              <h2 class="panneau__titre"><span class="ms" aria-hidden="true">lightbulb</span> Repère de modération</h2>
+              <p>Sur les produits périssables (tomate, piment, feuilles), un écart d'environ 10 % d'un jour à l'autre relève souvent de la fluctuation normale. Vérifiez surtout la cohérence de l'unité avant de rejeter.</p>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ===================== Vue Prix officiels (feature 23) ===================== -->
+      <section class="vue" id="vue-officiels" aria-labelledby="titre-officiels" hidden>
+        <header class="espace__entete">
+          <h1 class="espace__titre" id="titre-officiels">Prix officiels du Ministère du Commerce</h1>
+          <p class="espace__intro">Saisissez les prix publiés par le Ministère du Commerce (arrêtés, mercuriales). Ils s'affichent sur la page publique « Prix officiels » et à côté de chaque proposition à vérifier. Un prix n'est jamais effacé : il est retiré, et l'historique reste.</p>
+        </header>
+        <p class="annonce" id="annonce-officiels" role="status" aria-live="polite"></p>
+        <div class="officiels-admin">
+          <section class="carte" aria-labelledby="titre-saisie-officiel">
+            <h2 class="carte__titre" id="titre-saisie-officiel">Saisir un prix officiel</h2>
+            <form class="formulaire-officiel" id="formulaire-officiel" novalidate>
+              <p class="alerte" id="officiel-erreur" role="alert" hidden></p>
+              <div class="champ">
+                <label for="o-produit">Produit</label>
+                <select id="o-produit" name="produit_id" required></select>
+                <p class="erreur" data-erreur-officiel="produit_id" hidden></p>
+              </div>
+              <fieldset class="champ champ--radios">
+                <legend>Type de prix</legend>
+                <label><input type="radio" name="type" value="plafond" checked> Prix plafond (maximum légal)</label>
+                <label><input type="radio" name="type" value="indicatif"> Prix indicatif (référence)</label>
+                <p class="erreur" data-erreur-officiel="type" hidden></p>
+              </fieldset>
+              <div class="deux-champs-admin">
+                <div class="champ">
+                  <label for="o-montant">Prix (FCFA)</label>
+                  <input id="o-montant" name="montant" type="number" inputmode="numeric" min="1" step="1" required>
+                  <p class="erreur" data-erreur-officiel="montant" hidden></p>
+                </div>
+                <div class="champ">
+                  <label for="o-unite">Unité</label>
+                  <select id="o-unite" name="unite" required></select>
+                  <p class="erreur" data-erreur-officiel="unite" hidden></p>
+                </div>
+              </div>
+              <div class="champ">
+                <label for="o-date">En vigueur à partir du</label>
+                <input id="o-date" name="date_effet" type="date" required>
+                <p class="erreur" data-erreur-officiel="date_effet" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="o-reference">Texte officiel</label>
+                <input id="o-reference" name="reference" maxlength="200" placeholder="Ex. : Arrêté n° 2026-114 du Ministère du Commerce" required aria-describedby="o-reference-aide">
+                <p class="aide" id="o-reference-aide">Le texte d'où vient ce prix : il est affiché publiquement.</p>
+                <p class="erreur" data-erreur-officiel="reference" hidden></p>
+              </div>
+              <button type="submit" class="bouton bouton--principal">Enregistrer le prix officiel</button>
+            </form>
+          </section>
+          <section class="carte" aria-labelledby="titre-liste-officiels">
+            <h2 class="carte__titre" id="titre-liste-officiels">Prix saisis</h2>
+            <div class="tableau-conteneur">
+              <table class="tableau">
+                <thead>
+                  <tr><th scope="col">Produit</th><th scope="col">Type</th><th scope="col">Prix</th><th scope="col">Depuis le</th><th scope="col">Texte officiel</th><th scope="col">État</th><th scope="col"><span class="sr-only">Actions</span></th></tr>
+                </thead>
+                <tbody id="lignes-officiels"><tr><td colspan="7" class="chargement">Chargement…</td></tr></tbody>
+              </table>
+            </div>
+          </section>
         </div>
       </section>
 
@@ -148,6 +271,94 @@
         <p class="annonce" id="annonce-messages" role="status" aria-live="polite" tabindex="-1"></p>
         <ul class="messages" id="liste-messages"></ul>
         <p class="vide vide--simple" id="aucun-message" hidden>Aucun message reçu pour l'instant.</p>
+      </section>
+
+      <!-- ===================== Vue Administrateurs (feature 16) ===================== -->
+      <section class="vue" id="vue-administrateurs" aria-labelledby="titre-administrateurs" hidden>
+        <header class="espace__entete">
+          <h1 class="espace__titre" id="titre-administrateurs">Administrateurs</h1>
+          <p class="espace__aide">
+            Les comptes de l'équipe. Tous les administrateurs ont les mêmes droits.
+            Un compte n'est jamais supprimé : désactivé, il ne peut plus se connecter,
+            mais ce qu'il a publié reste attribué à son nom.
+          </p>
+        </header>
+
+        <p class="annonce" id="annonce-comptes" role="status" aria-live="polite" tabindex="-1"></p>
+
+        <div class="carte">
+          <div class="tableau-conteneur">
+            <table class="tableau tableau--comptes">
+              <caption class="sr-only">Comptes administrateurs</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Nom</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Statut</th>
+                  <th scope="col">Dernière connexion</th>
+                  <th scope="col"><span class="sr-only">Action</span></th>
+                </tr>
+              </thead>
+              <tbody id="lignes-comptes"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="formulaires-comptes">
+          <!-- Ajouter un compte -->
+          <section class="carte" aria-labelledby="titre-nouveau-compte">
+            <h2 class="carte__titre" id="titre-nouveau-compte">Ajouter un administrateur</h2>
+            <form class="formulaire" id="formulaire-compte" novalidate>
+              <p class="alerte" id="compte-erreur" role="alert" hidden></p>
+              <div class="champ">
+                <label for="n-nom">Nom</label>
+                <input id="n-nom" name="nom" type="text" maxlength="100" autocomplete="off" aria-describedby="n-erreur-nom">
+                <p class="erreur" id="n-erreur-nom" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="n-email">E-mail</label>
+                <input id="n-email" name="email" type="email" maxlength="254" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="n-erreur-email">
+                <p class="erreur" id="n-erreur-email" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="n-mdp">Mot de passe provisoire</label>
+                <div class="champ__groupe">
+                  <!-- type="text" : l'administrateur doit pouvoir le lire pour le transmettre -->
+                  <input id="n-mdp" name="mot_de_passe" type="text" maxlength="128" autocomplete="new-password" spellcheck="false" aria-describedby="n-aide-mdp n-erreur-mot_de_passe">
+                  <button type="button" class="bouton bouton--secondaire bouton--compact" id="generer-mdp">Générer</button>
+                </div>
+                <p class="aide" id="n-aide-mdp">12 caractères au moins. Transmettez-le par un moyen sûr : la personne pourra le changer depuis cette page.</p>
+                <p class="erreur" id="n-erreur-mot_de_passe" hidden></p>
+              </div>
+              <div><button type="submit" class="bouton bouton--principal">Créer le compte</button></div>
+            </form>
+          </section>
+
+          <!-- Changer son propre mot de passe -->
+          <section class="carte" aria-labelledby="titre-mon-mdp">
+            <h2 class="carte__titre" id="titre-mon-mdp">Changer mon mot de passe</h2>
+            <form class="formulaire" id="formulaire-mdp" novalidate>
+              <p class="alerte" id="mdp-erreur" role="alert" hidden></p>
+              <div class="champ">
+                <label for="m-actuel">Mot de passe actuel</label>
+                <input id="m-actuel" name="actuel" type="password" autocomplete="current-password" maxlength="128" aria-describedby="m-erreur-actuel">
+                <p class="erreur" id="m-erreur-actuel" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="m-nouveau">Nouveau mot de passe</label>
+                <input id="m-nouveau" name="nouveau" type="password" autocomplete="new-password" maxlength="128" aria-describedby="m-aide-nouveau m-erreur-nouveau">
+                <p class="aide" id="m-aide-nouveau">12 caractères au moins. Vos autres sessions ouvertes seront fermées.</p>
+                <p class="erreur" id="m-erreur-nouveau" hidden></p>
+              </div>
+              <div class="champ">
+                <label for="m-confirmation">Confirmez le nouveau mot de passe</label>
+                <input id="m-confirmation" name="confirmation" type="password" autocomplete="new-password" maxlength="128" aria-describedby="m-erreur-confirmation">
+                <p class="erreur" id="m-erreur-confirmation" hidden></p>
+              </div>
+              <div><button type="submit" class="bouton bouton--principal">Changer le mot de passe</button></div>
+            </form>
+          </section>
+        </div>
       </section>
     </main>
   </div>

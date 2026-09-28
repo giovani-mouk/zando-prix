@@ -1,6 +1,6 @@
 # Photos des produits
 
-> **État actuel :** le projet fournit des **illustrations vectorielles** (`.svg`) pour les 24 produits (`public/images/produits/`) et pour les 4 diapositives du carrousel (`public/images/accueil/`). Les diapositives expliquent le fonctionnement du site. Les illustrations suffisent pour la démonstration ; ce document explique comment les remplacer par de vraies photos.
+> **État actuel :** le projet fournit des **illustrations vectorielles** (`.svg`) pour les 24 produits (`public/images/produits/`). Le carrousel de l'accueil a été retiré : la maquette du PM n'en comporte pas. Les illustrations suffisent pour la démonstration ; ce document explique comment les remplacer par de vraies photos.
 >
 > Pour remplacer l'illustration d'un produit par une photo : déposez `public/images/produits/riz.webp`, puis mettez à jour le chemin en base, par exemple :
 >
@@ -8,7 +8,7 @@
 > UPDATE produits SET image = '/images/produits/riz.webp' WHERE nom = 'Riz';
 > ```
 >
-> et modifiez la même ligne dans `db/seed.sql`, pour que `npm run db:reset` garde la photo. Pour le carrousel, changez l'attribut `data-src` et la légende de la diapositive dans `public/index.html`.
+> et modifiez la même ligne dans `db/seed.sql`, pour que `npm run db:reset` garde la photo.
 
 Hors cadrage : fonctionnalité proposée pendant le sprint, à valider par le PM (`features/10_photos_produits.feature`).
 
@@ -84,42 +84,3 @@ WHERE nom = 'Banane plantain';
 ```
 
 La colonne n'accepte qu'un chemin commençant par `/` ou une adresse `https://`.
-
-# Photos du carrousel d'accueil
-
-Hors cadrage : fonctionnalité proposée pendant le sprint, à valider par le PM (`features/11_carrousel_accueil.feature`).
-
-Le carrousel s'affiche à droite du grand titre, sur les écrans d'au moins 960 pixels de large. Sur mobile, il n'est ni affiché ni téléchargé : les prix passent en premier.
-
-## Où déposer les photos
-
-Dans `public/images/accueil/`, avec ces noms. La légende est écrite dans `public/index.html` : si une photo montre autre chose, modifiez aussi sa légende (`<figcaption>`).
-
-| Fichier | Légende actuelle |
-|---|---|
-| `marche-total.webp` | Le marché Total, à Bacongo |
-| `marche-poto-poto.webp` | Le marché de Poto-Poto |
-| `etal-legumes.webp` | Un étal de légumes frais |
-| `poissons-fumes.webp` | Poissons fumés au marché |
-
-Tant qu'une photo manque, sa diapositive affiche un fond indigo avec la légende.
-
-## Format
-
-| Réglage | Valeur |
-|---|---|
-| Format | WebP |
-| Dimensions | 1 600 × 1 000 pixels, paysage 16:10 (le carrousel occupe jusqu'à 1 060 pixels de large sur un écran de 1 920) |
-| Poids visé | moins de 180 Ko par photo |
-
-Chaque photo n'est téléchargée qu'au moment où elle va s'afficher.
-
-## Que photographier
-
-Des vues des marchés et des étals, prises par l'équipe de préférence. La légende s'affiche sur le bas de l'image : gardez le sujet principal dans les deux tiers supérieurs.
-
-Comme pour les produits, évitez les visages reconnaissables sans l'accord des personnes, et notez la source et la licence de toute photo qui ne vient pas de l'équipe.
-
-## Ajouter ou retirer une photo
-
-Chaque photo correspond à un bloc `<figure class="diapo">` dans `public/index.html`. Copiez ou supprimez un bloc, puis mettez à jour la numérotation de l'attribut `aria-label` (« 1 sur 4 », « 2 sur 4 »...). Les points de navigation se créent automatiquement.
