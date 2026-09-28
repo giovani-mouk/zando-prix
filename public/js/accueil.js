@@ -43,10 +43,6 @@ let minuterie;
 const NOMBRE_FREQUENTS = 8;       // raccourcis sous la recherche (ordinateur)
 const NOMBRE_INDISPENSABLES = 7;  // raccourcis défilants (téléphone)
 const NOMBRE_EN_DIRECT = 4;       // produits de « Prix du jour en direct » (téléphone)
-const PAR_PAGE = 8;               // cartes par page (liste complète)
-
-// Pagination de la liste : produits à afficher et page courante
-const pagination = { groupes: [], page: 1, avecMarche: false, tri: 'prix' };
 
 // Icône Material Symbols (décorative)
 const ic = (nom) => el('span', { class: 'ms', 'aria-hidden': 'true' }, nom);
@@ -70,7 +66,6 @@ async function demarrer() {
   // Les filtres sont gardés dans l'adresse : un lien partagé rouvre la même vue
   const params = new URLSearchParams(window.location.search);
   champRecherche.value = params.get('q') ?? '';
-  pagination.page = Math.max(1, Number(params.get('page')) || 1);
   etat.produitDemande = params.get('produit') ?? '';
 
   try {
@@ -91,7 +86,7 @@ async function demarrer() {
   brancherEvenements();
   afficherMobile();
   afficherTendance();
-  await charger({ garderPage: true });
+  await charger();
 
   // Arrivée par /?proposer=1 (liens « Proposer un prix » des autres pages)
   if (params.has('proposer')) proposer(etat.produitDemande || undefined, params.get('marche') || undefined);
@@ -182,7 +177,7 @@ function brancherEvenements() {
 // Recharge les prix selon les filtres. Chaque appel prend un numéro, et seule
 // la réponse portant le dernier numéro est affichée : une réponse lente et
 // périmée ne remplace jamais une réponse plus récente.
-async function charger({ garderPage = false } = {}) {
+async function charger() {
   const numero = ++numeroRequete;
   if (!garderPage) pagination.page = 1;
   const recherche = champRecherche.value.trim();
@@ -190,7 +185,7 @@ async function charger({ garderPage = false } = {}) {
   const categorie = categorieChoisie();
   const tri = document.querySelector('input[name="tri"]:checked')?.value ?? 'prix';
 
-  ecrireAdresse({ q: recherche, marche: marcheId, categorie, tri: tri === 'prix' ? '' : tri, page: pagination.page > 1 ? pagination.page : '' });
+  ecrireAdresse({ q: recherche, marche: marcheId, categorie, tri: tri === 'prix' ? '' : tri });
   boutonEffacer.hidden = !(recherche || marcheId || categorie);
   boutonEffacerRecherche.hidden = recherche === '';
   zoneResultats.setAttribute('aria-busy', 'true');
@@ -267,61 +262,11 @@ function afficher(lignes, trouves, { recherche, marcheId, categorie, tri }) {
     Number(aDesPrix(b)) - Number(aDesPrix(a))
     || (tri === 'fraicheur' ? derniereDate(b).localeCompare(derniereDate(a)) : 0));
 
-  Object.assign(pagination, { groupes: groupesTries, avecMarche: Boolean(marche), tri });
-  afficherPage();
+  zoneResultats.replaceChildren(...groupesTries.map((l) => carteProduit(l, Boolean(marche), tri)));
 
-  const total = groupes.size === 1 ? '1 produit trouvé' : `${groupes.size} produits trouvés`;
+  const total = groupes.size === 1 ? '1 produit affiché' : `${groupes.size} produits affichés`;
   resume.classList.remove('sr-only');
   resume.textContent = total + (categorie ? ` dans la catégorie ${categorie}` : '') + (marche ? ` pour ${marche.nom}` : '');
-}
-
-// Une page de cartes, et les boutons de pagination sous la grille
-function afficherPage({ defiler = false } = {}) {
-  const { groupes } = pagination;
-  const pages = Math.max(1, Math.ceil(groupes.length / PAR_PAGE));
-  pagination.page = Math.min(pagination.page, pages);
-  const debut = (pagination.page - 1) * PAR_PAGE;
-  zoneResultats.replaceChildren(...groupes.slice(debut, debut + PAR_PAGE)
-    .map((l) => carteProduit(l, pagination.avecMarche, pagination.tri)));
-
-  const pied = $('#pied-pagination');
-  pied.hidden = groupes.length <= PAR_PAGE;
-  $('#pagination-texte').textContent =
-    `Affichage de ${debut + 1} à ${Math.min(debut + PAR_PAGE, groupes.length)} sur ${groupes.length} produits`;
-  $('#pagination-accueil').replaceChildren(...boutonsPagination(pagination.page, pages));
-
-  // Garde la page dans l'adresse, pour qu'un lien partagé rouvre la même page
-  const params = new URLSearchParams(window.location.search);
-  if (pagination.page > 1) params.set('page', pagination.page);
-  else params.delete('page');
-  window.history.replaceState(null, '', params.toString() ? `?${params}` : window.location.pathname);
-
-  if (defiler) allerAuxResultats();
-}
-
-// Première, précédente, pages proches, dernière (comme le registre de l'équipe)
-function boutonsPagination(page, pages) {
-  const aller = (n) => () => {
-    pagination.page = n;
-    afficherPage({ defiler: true });
-  };
-  const numeros = [...new Set([1, page - 1, page, page + 1, pages])].filter((n) => n >= 1 && n <= pages).sort((a, b) => a - b);
-  const boutons = [];
-  numeros.forEach((n, i) => {
-    if (i > 0 && n - numeros[i - 1] > 1) boutons.push(el('span', { class: 'pagination__trou', 'aria-hidden': 'true' }, '…'));
-    boutons.push(el('button', {
-      type: 'button',
-      class: 'pagination__page',
-      'aria-label': `Page ${n}`,
-      'aria-current': n === page ? 'page' : null,
-      onclick: aller(n),
-    }, String(n)));
-  });
-  return [
-    el('button', { type: 'button', class: 'pagination__fleche', disabled: page === 1, 'aria-label': 'Page précédente', onclick: aller(page - 1) }, ic('chevron_left')),
-    ...boutons,
-    el('button', { type: 'button', class: 'pagination__fleche', disabled: page === pages, 'aria-label': 'Page suivante', onclick: aller(page + 1) }, ic('chevron_right')),
-  ];
 }
 
 // Carte d'un produit (maquette : « Prix du Jour dans les Marchés »)

@@ -141,6 +141,27 @@
         </div>
         <button type="button" class="carte-signaler__bouton" data-proposer><span class="ms" aria-hidden="true">bolt</span> Signaler un prix en direct</button>
       </section>
+
+      <!-- Prix du jour en direct : quelques produits, le reste avec « Tout voir » -->
+      <section class="en-direct" aria-labelledby="titre-en-direct">
+        <div class="en-direct__entete">
+          <h2 class="en-direct__titre" id="titre-en-direct"><span class="point-vert" aria-hidden="true"></span> Prix du jour en direct</h2>
+          <button type="button" class="en-direct__tout" id="tout-voir" aria-expanded="false" aria-controls="tous-les-prix">Tout voir</button>
+        </div>
+        <div class="en-direct__cartes" id="en-direct"></div>
+      </section>
+
+      <!-- Vous êtes au marché ? -->
+      <section class="carte-signaler" aria-labelledby="titre-signaler">
+        <div class="carte-signaler__haut">
+          <span class="carte-signaler__icone"><span class="ms" aria-hidden="true">storefront</span></span>
+          <div>
+            <h2 class="carte-signaler__titre" id="titre-signaler">Vous êtes au marché&nbsp;?</h2>
+            <p class="carte-signaler__texte">Tapez le prix que vous voyez sur l'étal en quelques secondes pour aider la communauté.</p>
+          </div>
+        </div>
+        <button type="button" class="carte-signaler__bouton" data-proposer><span class="ms" aria-hidden="true">bolt</span> Signaler un prix en direct</button>
+      </section>
     </div>
 
     <!-- =========================================================
@@ -231,12 +252,6 @@
 
 
       <!-- Tendance de la semaine : GET /api/tendance -->
-      <!-- Pagination des cartes (même composant que le registre de l'équipe) -->
-      <div class="pied-pagination" id="pied-pagination" hidden>
-        <p class="pied-pagination__texte" id="pagination-texte"></p>
-        <nav class="pagination" id="pagination-accueil" aria-label="Pages des produits"></nav>
-      </div>
-
       <div class="tendance" id="tendance" hidden>
         <div class="tendance__texte">
           <span class="tendance__icone" id="tendance-icone"><span class="ms" aria-hidden="true">trending_flat</span></span>
