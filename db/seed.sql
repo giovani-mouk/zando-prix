@@ -21,34 +21,34 @@ TRUNCATE prix, propositions, marches, produits, messages RESTART IDENTITY CASCAD
 -- Illustrations fournies dans public/images/produits/ (.svg). Pour des photos, voir docs/photos-produits.md.
 -- Tant qu'un fichier manque, la page affiche l'initiale du produit à la place.
 INSERT INTO produits (nom, categorie, unite_reference, image) VALUES
-  ('Riz',            'Céréales',  'kg',    '/images/produits/riz.svg'),
-  ('Manioc',         'Féculents', 'kg',    '/images/produits/manioc.svg'),
-  ('Tomate',         'Légumes',   'kg',    '/images/produits/tomate.svg'),
-  ('Oignon',         'Légumes',   'kg',    '/images/produits/oignon.svg'),
-  ('Huile de palme', 'Huiles',    'litre', '/images/produits/huile-de-palme.svg'),
-  ('Poisson salé',   'Poissons',  'kg',    '/images/produits/poisson-sale.svg');
+  ('Riz',            'Céréales',  'kg',    '/images/produits/riz.webp'),
+  ('Manioc',         'Féculents', 'kg',    '/images/produits/manioc.webp'),
+  ('Tomate',         'Légumes',   'kg',    '/images/produits/tomate.webp'),
+  ('Oignon',         'Légumes',   'kg',    '/images/produits/oignon.webp'),
+  ('Huile de palme', 'Huiles',    'litre', '/images/produits/huile-de-palme.webp'),
+  ('Poisson salé',   'Poissons',  'kg',    '/images/produits/poisson-sale.webp');
 
 -- Autres produits courants des marchés : ils donnent du volume à la démo
 -- et ne portent pas de cas de test particulier.
 INSERT INTO produits (nom, categorie, unite_reference, image) VALUES
-  ('Maïs',               'Céréales',         'kg',    '/images/produits/mais.svg'),
-  ('Farine de blé',      'Céréales',         'kg',    '/images/produits/farine-de-ble.svg'),
-  ('Chikwangue',         'Féculents',        'piece', '/images/produits/chikwangue.svg'),
-  ('Banane plantain',    'Féculents',        'tas',   '/images/produits/banane-plantain.svg'),
-  ('Igname',             'Féculents',        'kg',    '/images/produits/igname.svg'),
-  ('Patate douce',       'Féculents',        'kg',    '/images/produits/patate-douce.svg'),
-  ('Saka-saka',          'Légumes',          'botte', '/images/produits/saka-saka.svg'),
-  ('Piment',             'Légumes',          'tas',   '/images/produits/piment.svg'),
-  ('Gombo',              'Légumes',          'tas',   '/images/produits/gombo.svg'),
-  ('Arachide',           'Légumineuses',     'kg',    '/images/produits/arachide.svg'),
-  ('Haricots',           'Légumineuses',     'kg',    '/images/produits/haricots.svg'),
-  ('Huile végétale',     'Huiles',           'litre', '/images/produits/huile-vegetale.svg'),
-  ('Poisson fumé',       'Poissons',         'kg',    '/images/produits/poisson-fume.svg'),
-  ('Chinchard (mpiodi)', 'Poissons',         'kg',    '/images/produits/chinchard.svg'),
-  ('Poulet',             'Viandes et œufs',  'piece', '/images/produits/poulet.svg'),
-  ('Œufs',               'Viandes et œufs',  'piece', '/images/produits/oeufs.svg'),
-  ('Sucre',              'Épicerie',         'kg',    '/images/produits/sucre.svg'),
-  ('Sel',                'Épicerie',         'kg',    '/images/produits/sel.svg');
+  ('Maïs',               'Céréales',         'kg',    '/images/produits/mais.webp'),
+  ('Farine de blé',      'Céréales',         'kg',    '/images/produits/farine-de-ble.webp'),
+  ('Chikwangue',         'Féculents',        'piece', '/images/produits/chikwangue.webp'),
+  ('Banane plantain',    'Féculents',        'tas',   '/images/produits/banane-plantain.webp'),
+  ('Igname',             'Féculents',        'kg',    '/images/produits/igname.webp'),
+  ('Patate douce',       'Féculents',        'kg',    '/images/produits/patate-douce.webp'),
+  ('Saka-saka',          'Légumes',          'botte', '/images/produits/saka-saka.webp'),
+  ('Piment',             'Légumes',          'tas',   '/images/produits/piment.webp'),
+  ('Gombo',              'Légumes',          'tas',   '/images/produits/gombo.webp'),
+  ('Arachide',           'Légumineuses',     'kg',    '/images/produits/arachide.webp'),
+  ('Haricots',           'Légumineuses',     'kg',    '/images/produits/haricots.webp'),
+  ('Huile végétale',     'Huiles',           'litre', '/images/produits/huile-vegetale.webp'),
+  ('Poisson fumé',       'Poissons',         'kg',    '/images/produits/poisson-fume.webp'),
+  ('Chinchard (mpiodi)', 'Poissons',         'kg',    '/images/produits/chinchard.webp'),
+  ('Poulet',             'Viandes et œufs',  'piece', '/images/produits/poulet.webp'),
+  ('Œufs',               'Viandes et œufs',  'piece', '/images/produits/oeufs.webp'),
+  ('Sucre',              'Épicerie',         'kg',    '/images/produits/sucre.webp'),
+  ('Sel',                'Épicerie',         'kg',    '/images/produits/sel.webp');
 
 -- -------------------------------------------------------------
 -- Marchés
