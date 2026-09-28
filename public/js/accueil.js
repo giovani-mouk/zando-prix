@@ -179,6 +179,7 @@ function brancherEvenements() {
 // périmée ne remplace jamais une réponse plus récente.
 async function charger() {
   const numero = ++numeroRequete;
+  if (!garderPage) pagination.page = 1;
   const recherche = champRecherche.value.trim();
   const marcheId = champMarche.value;
   const categorie = categorieChoisie();

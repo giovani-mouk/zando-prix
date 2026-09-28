@@ -859,6 +859,7 @@ a { color: var(--bleu); text-underline-offset: 0.2em; }
   color: var(--encre-douce);
   font-size: 0.9375rem;
 }
+.section-prix__note { color: var(--encre-pale); font-size: 0.8125rem; }
 
 /* ---------- Cartes de prix (« planches ») ---------- */
 
